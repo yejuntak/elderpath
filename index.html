@@ -906,14 +906,14 @@
       var urgent = when && (when.value === 'now' || when.value === '3mo');
       var btn = form.querySelector('button');
       btn.disabled = true; btn.textContent = 'Joining…';
-      var endpoint = 'https://airform.io/' + ['takyejun', 'gmail.com'].join('@');
+      // Google Forms backend — responses land in the form owner's Google Sheet
+      var endpoint = 'https://docs.google.com/forms/d/e/1FAIpQLScgC7S6uMUU0TD3RmqRA_vdIFpqDHHpccvXpWSxTcOGq4_y7g/formResponse';
+      var timelineLabels = { now: 'Now — urgent', '3mo': 'Within 3 months', '12mo': '3–12 months', research: 'Just researching' };
       var controller = new AbortController();
       var timer = setTimeout(function () { controller.abort(); }, 10000);
       var payload = new URLSearchParams();
-      payload.append('form', 'ElderPath waitlist');
-      payload.append('email', email);
-      payload.append('timeline', when ? (when.value || 'not answered') : 'not asked');
-      payload.append('page', window.location.href);
+      payload.append('entry.1566342817', email);
+      payload.append('entry.2114917503', when && timelineLabels[when.value] ? timelineLabels[when.value] : 'Not answered');
       fetch(endpoint, {
         method: 'POST',
         mode: 'no-cors',
