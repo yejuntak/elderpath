@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Look up any US nursing home's safety record — free | ElderPath Check</title>
+<meta name="description" content="Search all 14,700 Medicare-certified US nursing homes: federal star rating, abuse flags, fines, and inspection deficiencies — straight from the May 2026 CMS data. Free, no signup.">
+<link rel="canonical" href="https://yejuntak.github.io/elderpath/check/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Look up any US nursing home's federal safety record — free">
+<meta property="og:description" content="All 14,700 certified facilities searchable: star rating, abuse flags, fines, deficiencies. Straight from federal data, May 2026.">
+<meta property="og:url" content="https://yejuntak.github.io/elderpath/check/">
+<meta property="og:image" content="https://yejuntak.github.io/elderpath/img/family.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%239d4f24'/%3E%3Ctext x='32' y='44' font-family='Georgia,serif' font-size='36' font-weight='bold' fill='%23fff' text-anchor='middle'%3EE%3C/text%3E%3C/svg%3E">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "ElderPath Check",
+  "url": "https://yejuntak.github.io/elderpath/check/",
+  "applicationCategory": "HealthApplication",
+  "operatingSystem": "Web",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+  "description": "Free lookup of the federal safety record — star rating, abuse flags, fines, and inspection deficiencies — for any of the 14,700 Medicare-certified US nursing homes, based on the CMS Provider Information dataset (May 2026)."
+}
+</script>
+<style>
+  :root {
+    --ink: #2b251d; --body: #57503f; --muted: #6e6553;
+    --cream: #f7f3ec; --cream-2: #efe8db; --card: #fffdf9;
+    --sienna: #9d4f24; --sienna-dark: #7c3c17;
+    --green: #2f6b52; --line: #e3dac8;
+    --brown: #2b2118; --on-brown-muted: #b5a98f;
+    --g-a: #2e7d4f; --g-b: #5f7d1f; --g-c: #9a6a00; --g-d: #b54708; --g-f: #b3261e;
+    --red: #b3261e; --red-bg: #f9eae5;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; background: var(--cream); color: var(--ink); font-size: 17px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+  h1, h2, h3 { font-family: Georgia, 'Times New Roman', serif; font-weight: 600; line-height: 1.12; letter-spacing: -.01em; }
+  .it { font-style: italic; color: var(--sienna); }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 0 clamp(18px, 4vw, 24px); }
+  a:focus-visible, button:focus-visible, input:focus-visible { outline: 3px solid var(--sienna); outline-offset: 2px; }
+  nav { position: sticky; top: 0; z-index: 50; background: rgba(247,243,236,.93); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); }
+  .nav-inner { display: flex; align-items: center; justify-content: space-between; height: 64px; }
+  .logo { font-family: Georgia, serif; font-weight: 700; font-size: 20px; color: var(--ink); text-decoration: none; }
+  .logo em { font-style: italic; color: var(--sienna); }
+  .btn { display: inline-block; background: var(--sienna); color: #fff; border: none; cursor: pointer; font-family: inherit; font-size: 15px; font-weight: 600; padding: 11px 22px; border-radius: 999px; text-decoration: none; }
+  .btn:hover { background: var(--sienna-dark); }
+  header.h { padding: 56px 0 28px; text-align: center; }
+  .kicker { display: block; font-size: 12.5px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: var(--sienna); margin-bottom: 14px; }
+  h1 { font-size: clamp(30px, 5.4vw, 46px); margin-bottom: 14px; }
+  .sub { color: var(--body); max-width: 56ch; margin: 0 auto; }
+  .searchbox { position: relative; margin: 28px 0 8px; }
+  .searchbox input {
+    width: 100%; padding: 17px 24px; font-size: 17px; font-family: inherit;
+    border: 2px solid var(--line); border-radius: 999px; background: #fff; color: var(--ink);
+  }
+  .searchbox input:focus { border-color: var(--sienna); }
+  .hint { font-size: 13px; color: var(--muted); text-align: center; }
+  .results { margin: 14px 0 0; display: grid; gap: 8px; }
+  .res {
+    text-align: left; background: var(--card); border: 1px solid var(--line); border-radius: 14px;
+    padding: 13px 18px; cursor: pointer; font-family: inherit; font-size: 15.5px; color: var(--ink);
+    display: flex; justify-content: space-between; gap: 12px; align-items: center; width: 100%;
+  }
+  .res:hover { border-color: var(--sienna); }
+  .res .loc { color: var(--muted); font-size: 13.5px; white-space: nowrap; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 20px; box-shadow: 0 18px 50px rgba(43,37,29,.12); padding: 26px 28px; margin: 22px 0; }
+  .card-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; border-bottom: 1px solid var(--line); padding-bottom: 14px; margin-bottom: 8px; }
+  .card-head h2 { font-size: 22px; }
+  .card-head .loc { font-size: 14px; color: var(--body); margin-top: 2px; }
+  .grade { flex-shrink: 0; text-align: center; border-radius: 14px; padding: 10px 16px; color: #fff; }
+  .grade .g { font-family: Georgia, serif; font-size: 28px; font-weight: 700; line-height: 1; }
+  .grade .gl { font-size: 10.5px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+  .row { display: flex; justify-content: space-between; gap: 12px; padding: 9px 0; font-size: 15.5px; border-bottom: 1px dashed var(--line); }
+  .row:last-of-type { border-bottom: none; }
+  .row .l { color: var(--body); }
+  .row .v { font-weight: 600; text-align: right; }
+  .v.ok { color: var(--green); } .v.warn { color: var(--red); }
+  .flag { background: var(--red-bg); border: 1px solid #ecd5c9; color: var(--red); font-weight: 700; border-radius: 12px; padding: 12px 16px; margin: 12px 0 4px; font-size: 15px; }
+  .card .src { font-size: 12.5px; color: var(--muted); margin-top: 12px; }
+  .share-row { display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
+  .share-row .btn.ghost { background: transparent; color: var(--sienna); border: 1.5px solid var(--sienna); }
+  .share-row .btn.ghost:hover { background: var(--cream-2); }
+  .cta { background: var(--brown); color: #fff; border-radius: 18px; padding: 24px 26px; margin: 26px 0; display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; }
+  .cta h3 { color: #fff; font-size: 19px; margin-bottom: 4px; }
+  .cta p { color: var(--on-brown-muted); font-size: 14.5px; max-width: 46ch; }
+  section.about { padding: 34px 0 10px; }
+  section.about h2 { font-size: 22px; margin-bottom: 10px; }
+  section.about p { color: var(--body); font-size: 15.5px; margin-bottom: 12px; }
+  footer { border-top: 1px solid var(--line); margin-top: 44px; padding: 28px 0 48px; font-size: 13px; color: var(--muted); }
+  footer a { color: var(--sienna); }
+  .toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: 26px; background: var(--ink); color: #fff; padding: 11px 20px; border-radius: 999px; font-size: 14px; opacity: 0; transition: opacity .25s; pointer-events: none; }
+  .toast.show { opacity: 1; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .toast { transition: none; } }
+</style>
+</head>
+<body>
+
+<nav aria-label="Main">
+  <div class="wrap nav-inner">
+    <a class="logo" href="../">Elder<em>Path</em></a>
+    <a class="btn" href="../#join">Get early access</a>
+  </div>
+</nav>
+
+<main id="main">
+<div class="wrap">
+
+<header class="h">
+  <span class="kicker">ElderPath Check · Free</span>
+  <h1>Look up any US nursing home's <span class="it">federal safety record.</span></h1>
+  <p class="sub">All 14,700 Medicare-certified facilities, searchable: star rating, abuse flags, federal fines, and inspection deficiencies — straight from the May 2026 CMS data. No signup.</p>
+  <div class="searchbox">
+    <input id="q" type="search" placeholder="Facility name, city, or state — try your hometown" aria-label="Search nursing homes by name, city, or state" autocomplete="off">
+  </div>
+  <p class="hint" id="hint">Type at least 3 characters · e.g. "Lindale TX", "Brookdale", "Missouri"</p>
+  <div class="results" id="results" aria-live="polite"></div>
+</header>
+
+<div id="card-slot"></div>
+
+<div class="cta">
+  <div>
+    <h3>This is the data referral sites don't show you.</h3>
+    <p>ElderPath builds full report cards — inspections, staffing, and real prices — for assisted living too. Free for families.</p>
+  </div>
+  <a class="btn" href="../#join">Join the waitlist</a>
+</div>
+
+<section class="about">
+  <h2>Where does this data come from?</h2>
+  <p>Every result is drawn unaltered from the <a href="https://data.cms.gov/provider-data/dataset/4pq5-n9py">CMS Provider Information dataset</a> (May 2026 monthly release) — the federal government's official record for all Medicare- and Medicaid-certified nursing homes. The star rating is CMS's Five-Star Quality Rating; the abuse flag is CMS's own abuse icon; fines are federal enforcement totals on the facility's current record.</p>
+  <p>Context from our analysis of the full dataset: <strong>19.6% of US nursing homes are rated 1 star</strong>, 1,482 carry an active abuse flag, and facilities have paid $462M in federal fines. See <a href="../report/">The State of US Nursing Home Safety, 2026</a> — every state ranked.</p>
+  <p><strong>A note on assisted living:</strong> this lookup covers nursing homes, because they're the only senior-care setting with a federal dataset. Assisted-living records are scattered across 50 state agencies — unifying them into the same kind of report card is what <a href="../">ElderPath</a> is being built to do.</p>
+</section>
+
+</div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p><a href="../">ElderPath</a> is a pre-launch, independent senior-living search service. Data shown as published by CMS (May 2026); always confirm current status directly with the facility and <a href="https://www.medicare.gov/care-compare/">Medicare Care Compare</a>. © 2026 ElderPath.</p>
+  </div>
+</footer>
+
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+(function () {
+  var DATA = null, loading = null;
+  var q = document.getElementById('q');
+  var resultsEl = document.getElementById('results');
+  var cardSlot = document.getElementById('card-slot');
+  var hint = document.getElementById('hint');
+  var toast = document.getElementById('toast');
+  var GRADES = { 5: ['A', '#2e7d4f'], 4: ['B', '#5f7d1f'], 3: ['C', '#9a6a00'], 2: ['D', '#b54708'], 1: ['F', '#b3261e'], 0: ['–', '#6e6553'] };
+  var NAT_DEF_AVG = 9.3;
+
+  function load() {
+    if (DATA || loading) return loading;
+    hint.textContent = 'Loading 14,700 facilities…';
+    loading = fetch('data.json').then(function (r) { return r.json(); }).then(function (j) {
+      DATA = j.map(function (f, i) { return { i: i, name: f[0], city: f[1], st: f[2], rating: f[3], abuse: f[4], fines: f[5], finesN: f[6], defs: f[7], sff: f[8], staff: f[9], hay: (f[0] + ' ' + f[1] + ' ' + f[2]).toLowerCase() }; });
+      hint.textContent = 'Type at least 3 characters · e.g. "Lindale TX", "Brookdale", "Missouri"';
+      return DATA;
+    });
+    return loading;
+  }
+
+  function fmtMoney(n) {
+    if (n >= 1e6) return '$' + (n / 1e6).toFixed(1) + 'M';
+    if (n >= 1e3) return '$' + Math.round(n / 1e3) + 'K';
+    return '$' + n;
+  }
+
+  function search(term) {
+    var t = term.toLowerCase().trim();
+    if (t.length < 3 || !DATA) return [];
+    var words = t.split(/\s+/);
+    var scored = [];
+    for (var i = 0; i < DATA.length; i++) {
+      var f = DATA[i], ok = true, score = 0;
+      for (var w = 0; w < words.length; w++) {
+        var idx = f.hay.indexOf(words[w]);
+        if (idx === -1) { ok = false; break; }
+        score += (idx === 0 || f.hay[idx - 1] === ' ') ? 0 : 5;
+        score += idx * 0.01;
+      }
+      if (ok) { scored.push([score, f]); if (scored.length > 400) break; }
+    }
+    scored.sort(function (a, b) { return a[0] - b[0]; });
+    return scored.slice(0, 8).map(function (s) { return s[1]; });
+  }
+
+  function showResults(list) {
+    resultsEl.innerHTML = '';
+    list.forEach(function (f) {
+      var b = document.createElement('button');
+      b.className = 'res'; b.type = 'button';
+      b.innerHTML = '<span>' + f.name + '</span><span class="loc">' + f.city + ', ' + f.st + '</span>';
+      b.addEventListener('click', function () { showCard(f); });
+      resultsEl.appendChild(b);
+    });
+  }
+
+  function showCard(f) {
+    var g = GRADES[f.rating] || GRADES[0];
+    var defsLine = f.defs >= 0
+      ? '<div class="row"><span class="l">Health deficiencies, latest inspection cycle</span><span class="v ' + (f.defs > NAT_DEF_AVG ? 'warn' : 'ok') + '">' + f.defs + ' <small>(US avg ' + NAT_DEF_AVG + ')</small></span></div>' : '';
+    var staffLine = f.staff > 0
+      ? '<div class="row"><span class="l">Nurse staffing hours per resident per day</span><span class="v">' + f.staff.toFixed(2) + '</span></div>' : '';
+    cardSlot.innerHTML =
+      '<div class="card" id="rc">' +
+      '<div class="card-head"><div><h2>' + f.name + '</h2><div class="loc">' + f.city + ', ' + f.st + ' · Medicare-certified nursing facility</div></div>' +
+      '<div class="grade" style="background:' + g[1] + '"><div class="g">' + g[0] + '</div><div class="gl">CMS ' + (f.rating ? f.rating + '/5' : 'not rated') + '</div></div></div>' +
+      (f.abuse ? '<div class="flag">⚠ Carries the CMS abuse flag — cited for abuse that harmed or could harm residents.</div>' : '') +
+      (f.sff ? '<div class="flag">⚠ In the federal Special Focus program for persistently poor care.</div>' : '') +
+      '<div class="row"><span class="l">Federal fines on current record</span><span class="v ' + (f.fines > 0 ? 'warn' : 'ok') + '">' + (f.fines > 0 ? fmtMoney(f.fines) + ' across ' + f.finesN + ' fine' + (f.finesN === 1 ? '' : 's') : 'None') + '</span></div>' +
+      defsLine + staffLine +
+      '<p class="src">Source: CMS Provider Information dataset, May 2026 release. Verify current status at Medicare Care Compare.</p>' +
+      '<div class="share-row"><button class="btn" id="share">Share this record</button>' +
+      '<a class="btn ghost" href="https://www.medicare.gov/care-compare/?providerType=NursingHome&redirect=true" target="_blank" rel="noopener">Verify on Medicare.gov</a></div>' +
+      '</div>';
+    var url = location.origin + location.pathname + '?q=' + encodeURIComponent(f.name + ' ' + f.st);
+    document.getElementById('share').addEventListener('click', function () {
+      var text = f.name + ' (' + f.city + ', ' + f.st + ') — CMS rating ' + (f.rating ? f.rating + '/5' : 'not rated') + (f.fines > 0 ? ', ' + fmtMoney(f.fines) + ' in federal fines' : '') + (f.abuse ? ', active abuse flag' : '') + '. Check any US nursing home free:';
+      if (navigator.share) { navigator.share({ title: 'ElderPath Check', text: text, url: url }).catch(function () {}); }
+      else {
+        navigator.clipboard.writeText(text + ' ' + url).then(function () {
+          toast.textContent = 'Copied — paste anywhere'; toast.classList.add('show');
+          setTimeout(function () { toast.classList.remove('show'); }, 2200);
+        });
+      }
+    });
+    cardSlot.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  var debounce;
+  q.addEventListener('input', function () {
+    clearTimeout(debounce);
+    var v = q.value;
+    debounce = setTimeout(function () {
+      load().then(function () { showResults(search(v)); });
+    }, 120);
+  });
+  q.addEventListener('focus', load);
+
+  var params = new URLSearchParams(location.search);
+  if (params.get('q')) {
+    q.value = params.get('q');
+    load().then(function () {
+      var hits = search(q.value);
+      showResults(hits);
+      if (hits.length) showCard(hits[0]);
+    });
+  }
+})();
+</script>
+</body>
+</html>
