@@ -115,6 +115,16 @@
   footer a { color: var(--sienna); }
   .toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: 26px; background: var(--ink); color: #fff; padding: 11px 20px; border-radius: 999px; font-size: 14px; opacity: 0; transition: opacity .25s; pointer-events: none; }
   .toast.show { opacity: 1; }
+  .xtra-head { font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--sienna); margin: 16px 0 2px; }
+  .price-box { background: var(--cream-2); border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; margin-top: 14px; }
+  .price-box summary { cursor: pointer; font-weight: 700; font-size: 15px; color: var(--ink); }
+  .price-box .pf { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+  .price-box input, .price-box select {
+    font: inherit; font-size: 16px; padding: 10px 14px; border: 1.5px solid var(--line);
+    border-radius: 10px; background: #fff; color: var(--ink); flex: 1 1 140px; min-width: 0;
+  }
+  .price-box .btn { flex: 0 0 auto; }
+  .price-box .pf-note { font-size: 12px; color: var(--muted); margin-top: 8px; }
   @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .toast { transition: none; } }
 </style>
 </head>
@@ -195,6 +205,82 @@
   var GRADES = { 5: ['A', '#2e7d4f'], 4: ['B', '#5f7d1f'], 3: ['C', '#9a6a00'], 2: ['D', '#b54708'], 1: ['F', '#b3261e'], 0: ['–', '#6e6553'] };
   var NAT_DEF_AVG = 9.3;
 
+  // ---- live backend (Supabase Postgres; anon key is public by design, RLS-protected) ----
+  var API = 'https://mrwgqbjldhywdocmyuop.supabase.co';
+  var API_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1yd2dxYmpsZGh5d2RvY215dW9wIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODExMzg1NDcsImV4cCI6MjA5NjcxNDU0N30.txRl-6tuvNFKyrE5yPmHKz8vUqras7CFue6ETTYFqOY';
+  function apiGet(path) {
+    return fetch(API + path, { headers: { apikey: API_KEY, Authorization: 'Bearer ' + API_KEY } })
+      .then(function (r) { if (!r.ok) throw new Error('api ' + r.status); return r.json(); });
+  }
+  function apiPost(path, body) {
+    return fetch(API + path, {
+      method: 'POST',
+      headers: { apikey: API_KEY, Authorization: 'Bearer ' + API_KEY, 'Content-Type': 'application/json', Prefer: 'return=minimal' },
+      body: JSON.stringify(body)
+    }).then(function (r) { if (!r.ok) throw new Error('api ' + r.status); });
+  }
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]; }); }
+  function xrow(label, val, cls) {
+    return val == null || val === '' ? '' :
+      '<div class="row"><span class="l">' + label + '</span><span class="v' + (cls ? ' ' + cls : '') + '">' + val + '</span></div>';
+  }
+
+  function enrichCard(f) {
+    var rc = document.getElementById('rc');
+    if (!rc) return;
+    apiGet('/rest/v1/facilities?select=*&state=eq.' + encodeURIComponent(f.st) + '&name=ilike.' + encodeURIComponent(f.name.replace(/[%_]/g, '')) + '&limit=1')
+      .then(function (rows) {
+        var d = rows && rows[0];
+        var anchor = rc.querySelector('.src');
+        if (!d || !anchor || !document.getElementById('rc')) return;
+        var div = document.createElement('div');
+        div.innerHTML =
+          '<p class="xtra-head">Full record · live from the ElderPath database</p>' +
+          xrow('ElderPath grade <small>(<a href="../#method" style="color:var(--sienna)">methodology</a>)</small>', d.grade === 'ND' ? 'ND — not enough data' : esc(d.grade) + ' · ' + d.score + '/100', d.grade && d.grade.indexOf('A') === 0 ? 'ok' : (d.grade === 'F' || d.grade === 'D' ? 'warn' : '')) +
+          xrow('Address', esc(d.addr) + ', ' + esc(d.city) + ', ' + esc(d.state) + ' ' + esc(d.zip) + (d.county ? ' · ' + esc(d.county) + ' County' : '')) +
+          xrow('Ownership', esc(d.own) + (d.chain ? ' · ' + esc(d.chain) : '') + (d.beds ? ' · ' + d.beds + ' beds' : '')) +
+          xrow('RN hours / resident / day', d.s_rn != null ? d.s_rn + ' hrs' : null) +
+          xrow('Weekend staffing', d.s_wkend != null ? d.s_wkend + ' hrs' : null) +
+          xrow('Nursing staff turnover', d.s_turn != null ? d.s_turn + '%' : null, d.s_turn > 53 ? 'warn' : '') +
+          xrow('Deficiencies, prior inspection cycles', d.i_def23) +
+          xrow('Infection-control citations', d.i_infect) +
+          xrow('Medicare/Medicaid payment denials', d.p_denials, d.p_denials > 0 ? 'warn' : '') +
+          '<div class="price-box"><details><summary>💵 Know what this facility really costs? Share it (anonymous)</summary>' +
+          '<div class="pf">' +
+          '<input id="pr-usd" type="number" min="500" max="50000" placeholder="Monthly cost in USD" aria-label="Monthly cost in US dollars">' +
+          '<select id="pr-level" aria-label="Care level"><option value="nursing">Nursing care</option><option value="memory">Memory care</option><option value="assisted">Assisted living</option><option value="other">Other</option></select>' +
+          '<button class="btn" id="pr-send" type="button">Submit</button>' +
+          '</div><p class="pf-note">Goes into our real-pricing database (moderated before publication). No name, no email — just the number families never get upfront.</p>' +
+          '</details></div>';
+        rc.insertBefore(div, anchor);
+        var verify = rc.querySelector('a[href*="medicare.gov"]');
+        if (verify) verify.href = 'https://www.medicare.gov/care-compare/details/nursing-home/' + encodeURIComponent(d.ccn) + '?state=' + encodeURIComponent(d.state);
+        document.getElementById('pr-send').addEventListener('click', function () {
+          var usd = parseInt(document.getElementById('pr-usd').value, 10);
+          var level = document.getElementById('pr-level').value;
+          if (!usd || usd < 500 || usd > 50000) {
+            toast.textContent = 'Enter a monthly cost between $500 and $50,000';
+            toast.classList.add('show'); setTimeout(function () { toast.classList.remove('show'); }, 2200);
+            return;
+          }
+          var btn = document.getElementById('pr-send');
+          btn.disabled = true; btn.textContent = 'Sending…';
+          apiPost('/rest/v1/price_reports', { ccn: d.ccn, monthly_usd: usd, care_level: level })
+            .then(function () {
+              btn.textContent = 'Thank you ✓';
+              toast.textContent = 'Price recorded — this is how the real-pricing database gets built';
+              toast.classList.add('show'); setTimeout(function () { toast.classList.remove('show'); }, 2600);
+            })
+            .catch(function () {
+              btn.disabled = false; btn.textContent = 'Submit';
+              toast.textContent = 'Could not send — please try again';
+              toast.classList.add('show'); setTimeout(function () { toast.classList.remove('show'); }, 2200);
+            });
+        });
+      })
+      .catch(function () { /* backend unreachable — static card remains fully functional */ });
+  }
+
   function load() {
     if (DATA || loading) return loading;
     hint.textContent = 'Loading 14,700 facilities…';
@@ -274,6 +360,7 @@
       }
     });
     cardSlot.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    enrichCard(f);
   }
 
   // ---- share-card image (1200x630 PNG, canvas) ----

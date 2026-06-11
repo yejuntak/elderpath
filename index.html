@@ -923,22 +923,9 @@
       var urgent = when && (when.value === 'now' || when.value === '3mo');
       var btn = form.querySelector('button');
       btn.disabled = true; btn.textContent = 'Joining…';
-      // Google Forms backend — responses land in the form owner's Google Sheet
-      var endpoint = 'https://docs.google.com/forms/d/e/1FAIpQLScgC7S6uMUU0TD3RmqRA_vdIFpqDHHpccvXpWSxTcOGq4_y7g/formResponse';
+      // Primary backend: Supabase Postgres (write-only RLS). Fallback: Google Forms.
       var timelineLabels = { now: 'Now — urgent', '3mo': 'Within 3 months', '12mo': '3–12 months', research: 'Just researching' };
-      var controller = new AbortController();
-      var timer = setTimeout(function () { controller.abort(); }, 10000);
-      var payload = new URLSearchParams();
-      payload.append('entry.1566342817', email);
-      payload.append('entry.2114917503', when && timelineLabels[when.value] ? timelineLabels[when.value] : 'Not answered');
-      fetch(endpoint, {
-        method: 'POST',
-        mode: 'no-cors',
-        signal: controller.signal,
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: payload.toString()
-      }).then(function () {
-        clearTimeout(timer);
+      function succeed() {
         form.style.display = 'none';
         msg.className = 'waitlist-msg ok';
         msg.textContent = urgent
@@ -946,11 +933,43 @@
           : "You're on the list. We'll email " + email + " when ElderPath opens in your city — nothing else.";
         msg.setAttribute('tabindex', '-1');
         msg.focus();
-      }).catch(function () {
-        clearTimeout(timer);
+      }
+      function fail() {
         btn.disabled = false; btn.textContent = 'Get early access';
         msg.className = 'waitlist-msg err';
         msg.textContent = "Something went wrong on our end — please try once more.";
+      }
+      function viaGoogleForms() {
+        var endpoint = 'https://docs.google.com/forms/d/e/1FAIpQLScgC7S6uMUU0TD3RmqRA_vdIFpqDHHpccvXpWSxTcOGq4_y7g/formResponse';
+        var controller = new AbortController();
+        var timer = setTimeout(function () { controller.abort(); }, 10000);
+        var payload = new URLSearchParams();
+        payload.append('entry.1566342817', email);
+        payload.append('entry.2114917503', when && timelineLabels[when.value] ? timelineLabels[when.value] : 'Not answered');
+        return fetch(endpoint, {
+          method: 'POST', mode: 'no-cors', signal: controller.signal,
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: payload.toString()
+        }).then(function () { clearTimeout(timer); succeed(); })
+          .catch(function () { clearTimeout(timer); fail(); });
+      }
+      var supaCtl = new AbortController();
+      var supaTimer = setTimeout(function () { supaCtl.abort(); }, 8000);
+      fetch('https://mrwgqbjldhywdocmyuop.supabase.co/rest/v1/waitlist', {
+        method: 'POST', signal: supaCtl.signal,
+        headers: {
+          apikey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1yd2dxYmpsZGh5d2RvY215dW9wIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODExMzg1NDcsImV4cCI6MjA5NjcxNDU0N30.txRl-6tuvNFKyrE5yPmHKz8vUqras7CFue6ETTYFqOY',
+          Authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1yd2dxYmpsZGh5d2RvY215dW9wIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODExMzg1NDcsImV4cCI6MjA5NjcxNDU0N30.txRl-6tuvNFKyrE5yPmHKz8vUqras7CFue6ETTYFqOY',
+          'Content-Type': 'application/json', Prefer: 'return=minimal'
+        },
+        body: JSON.stringify({ email: email, timeline: when && when.value ? when.value : null, source: location.pathname + (i === 0 ? '#hero' : '#footer') })
+      }).then(function (r) {
+        clearTimeout(supaTimer);
+        if (!r.ok) throw new Error('supabase ' + r.status);
+        succeed();
+      }).catch(function () {
+        clearTimeout(supaTimer);
+        viaGoogleForms();
       });
     });
     var whenSel = form.querySelector('select.when');
