@@ -129,11 +129,14 @@
   }
   .embed-attrib a { color: #fff; font-weight: 700; text-decoration: none; }
   body.embed .embed-attrib { display: block; }
-  .embed-box { margin: 30px 0 0; }
-  .embed-box summary { cursor: pointer; font-size: 14px; font-weight: 600; color: var(--muted); }
+  .embed-box { margin: 22px auto 0; max-width: 620px; text-align: center; }
+  .embed-box summary { list-style: none; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; font-size: 13.5px; font-weight: 600; color: var(--muted); padding: 9px 16px; border: 1.5px solid var(--line); border-radius: 999px; transition: border-color .15s, color .15s; }
+  .embed-box summary::-webkit-details-marker { display: none; }
+  .embed-box summary:hover { border-color: var(--sienna); color: var(--sienna); }
+  .embed-box summary .icon { width: 15px; height: 15px; }
   .embed-box pre {
-    background: var(--card); border: 1px solid var(--line); border-radius: 12px;
-    padding: 14px 16px; font-size: 12.5px; overflow-x: auto; margin-top: 10px; user-select: all;
+    text-align: left; background: var(--card); border: 1.5px solid var(--line); border-radius: 12px;
+    padding: 14px 16px; font-size: 12.5px; overflow-x: auto; margin-top: 12px; user-select: all; line-height: 1.5;
   }
   /* flat: border carries elevation, no shadow */
   .card { background: var(--card); border: 1.5px solid var(--line); border-radius: 20px; padding: 26px 28px; margin: 22px 0; }
@@ -154,10 +157,10 @@
   .share-row { display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
   .share-row .btn.ghost { background: transparent; color: var(--sienna); border: 1.5px solid var(--sienna); }
   .share-row .btn.ghost:hover { background: var(--cream-2); }
-  .cta { background: var(--brown); color: #fff; border-radius: 18px; padding: 24px 26px; margin: 26px 0; display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; }
+  .cta { background: var(--brown); color: #fff; border-radius: 18px; padding: 26px 28px; margin: 28px 0 0; display: flex; justify-content: space-between; align-items: center; gap: 18px; flex-wrap: wrap; }
   .cta h3 { color: #fff; font-size: 19px; margin-bottom: 4px; }
   .cta p { color: var(--on-brown-muted); font-size: 14.5px; max-width: 46ch; }
-  section.about { padding: 34px 0 10px; }
+  section.about { padding: 40px 0 10px; margin-top: 12px; border-top: 1.5px solid var(--line); }
   section.about h2 { font-size: 22px; margin-bottom: 10px; }
   section.about p { color: var(--body); font-size: 15.5px; margin-bottom: 12px; }
   footer { border-top: 1px solid var(--line); margin-top: 44px; padding: 28px 0 48px; font-size: 13px; color: var(--muted); }
@@ -228,7 +231,7 @@
 </div>
 
 <details class="embed-box">
-  <summary>Run a senior-care site or local newsroom? Embed this lookup on your site (free)</summary>
+  <summary><svg class="icon" aria-hidden="true"><use href="../ui/lucide.svg#i-external-link"/></svg>Run a senior-care site or newsroom? Embed this lookup (free)</summary>
   <pre>&lt;iframe src="https://yejuntak.github.io/elderpath/check/?embed=1"
   style="width:100%;height:640px;border:1px solid #e3dac8;border-radius:16px"
   title="Nursing home safety lookup — ElderPath" loading="lazy"&gt;&lt;/iframe&gt;</pre>
@@ -517,15 +520,22 @@
     var u = new URL(location.href); u.searchParams.delete('browse'); u.searchParams.delete('st');
     history.replaceState(null, '', u.toString());
   }
-  function runBrowse(kind, st) {
+  function runBrowse(kind, st, isDefault) {
     var cfg = BROWSE[kind]; if (!cfg || !DATA) return;
+    function syncUrl() {
+      if (isDefault) return;  /* default view keeps the URL bare */
+      var u = new URL(location.href);
+      u.searchParams.set('browse', kind); st ? u.searchParams.set('st', st) : u.searchParams.delete('st');
+      u.searchParams.delete('q');
+      history.replaceState(null, '', u.toString());
+    }
     var pool = DATA.filter(function (f) { return (!st || f.st === st) && (!cfg.filter || cfg.filter(f)); });
     pool.sort(cfg.sort);
     var top = pool.slice(0, 12);
     resultsEl.innerHTML = '';
     if (!top.length) {
       resultsEl.innerHTML = '<div class="empty">No ' + esc(cfg.short) + ' facilities found in ' + (st || 'the US') + '. Try another state.</div>';
-      setChips(kind); var uu = new URL(location.href); uu.searchParams.set('browse', kind); st ? uu.searchParams.set('st', st) : uu.searchParams.delete('st'); uu.searchParams.delete('q'); history.replaceState(null, '', uu.toString());
+      setChips(kind); syncUrl();
       return;
     }
     var panel = document.createElement('div'); panel.className = 'panel';
@@ -540,10 +550,7 @@
         function () { showCard(f); }));
     });
     resultsEl.appendChild(panel);
-    var u = new URL(location.href);
-    u.searchParams.set('browse', kind); st ? u.searchParams.set('st', st) : u.searchParams.delete('st');
-    u.searchParams.delete('q');
-    history.replaceState(null, '', u.toString());
+    syncUrl();
     setChips(kind);
   }
   document.querySelectorAll('.seg-btn').forEach(function (ch) {
@@ -583,6 +590,11 @@
     activeBrowse = params.get('browse');
     if (params.get('st')) bst.value = params.get('st');
     load().then(function () { runBrowse(activeBrowse, bst.value); });
+  } else {
+    /* lead with data: never load empty. Default view = Largest fines, US.
+       Does not push to URL, so a bare /check/ stays canonical and shareable. */
+    activeBrowse = 'fines';
+    load().then(function () { runBrowse('fines', '', true); });
   }
 })();
 </script>
