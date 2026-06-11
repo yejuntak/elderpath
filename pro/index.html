@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ElderPath Pro — full facility reports</title>
+<meta name="description" content="The complete safety file on any US nursing facility: full inspection history, staffing analytics with state percentiles, federal penalties, and real prices reported by families. Sign in to unlock.">
+<link rel="canonical" href="https://yejuntak.github.io/elderpath/pro/">
+<meta name="robots" content="noindex">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%239d4f24'/%3E%3Ctext x='32' y='44' font-family='Georgia,serif' font-size='36' font-weight='bold' fill='%23fff' text-anchor='middle'%3EE%3C/text%3E%3C/svg%3E">
+<style>
+  :root {
+    --ink: #2b251d; --body: #57503f; --muted: #6e6553;
+    --cream: #f7f3ec; --cream-2: #efe8db; --card: #fffdf9;
+    --sienna: #9d4f24; --sienna-dark: #7c3c17;
+    --green: #2f6b52; --green-bg: #e7f0ea;
+    --red: #a13a2e; --red-bg: #f9eae5;
+    --amber: #8a6914; --line: #e3dac8; --brown: #2b2118;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: Inter, -apple-system, sans-serif; background: var(--cream); color: var(--ink); font-size: 16.5px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+  h1, h2, h3 { font-family: Georgia, serif; font-weight: 600; line-height: 1.15; }
+  .wrap { max-width: 860px; margin: 0 auto; padding: 0 clamp(18px, 4vw, 24px); }
+  a:focus-visible, button:focus-visible, input:focus-visible { outline: 3px solid var(--sienna); outline-offset: 2px; }
+  nav { position: sticky; top: 0; z-index: 40; background: rgba(247,243,236,.93); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); }
+  .nav-inner { display: flex; align-items: center; justify-content: space-between; height: 62px; }
+  .logo { font-family: Georgia, serif; font-weight: 700; font-size: 20px; color: var(--ink); text-decoration: none; }
+  .logo em { font-style: italic; color: var(--sienna); }
+  .logo .pro-tag { font-size: 11px; font-weight: 700; letter-spacing: .08em; color: #fff; background: var(--sienna); border-radius: 999px; padding: 3px 9px; vertical-align: middle; margin-left: 8px; }
+  .nav-right { display: flex; gap: 14px; align-items: center; font-size: 13.5px; color: var(--muted); }
+  .btn { display: inline-block; background: var(--sienna); color: #fff; border: none; cursor: pointer; font-family: inherit; font-size: 15px; font-weight: 600; padding: 12px 24px; border-radius: 999px; text-decoration: none; }
+  .btn:hover { background: var(--sienna-dark); }
+  .btn.ghost { background: transparent; color: var(--sienna); border: 1.5px solid var(--sienna); }
+  .btn.ghost:hover { background: var(--cream-2); }
+  .btn[disabled] { opacity: .6; cursor: default; }
+  .panel { background: var(--card); border: 1px solid var(--line); border-radius: 20px; box-shadow: 0 14px 44px rgba(43,37,29,.1); padding: 30px; margin: 36px 0; }
+  .panel h1 { font-size: clamp(24px, 4vw, 32px); margin-bottom: 10px; }
+  .panel p.sub { color: var(--body); font-size: 15px; max-width: 56ch; }
+  .field { display: flex; gap: 10px; margin: 18px 0 6px; flex-wrap: wrap; }
+  .field input { flex: 1 1 220px; min-width: 0; font: inherit; font-size: 16px; padding: 12px 18px; border: 1.5px solid var(--line); border-radius: 999px; background: #fff; color: var(--ink); }
+  .msg { min-height: 22px; font-size: 13.5px; margin-top: 8px; }
+  .msg.ok { color: var(--green); font-weight: 600; }
+  .msg.err { color: var(--red); }
+  .perks { list-style: none; margin: 16px 0; display: grid; gap: 8px; }
+  .perks li { padding-left: 26px; position: relative; font-size: 15px; color: var(--body); }
+  .perks li::before { content: "✓"; position: absolute; left: 0; color: var(--green); font-weight: 700; }
+  .price-tag { font-family: Georgia, serif; font-size: 22px; font-weight: 700; color: var(--sienna); margin: 6px 0 14px; }
+  .divider { display: flex; align-items: center; gap: 12px; color: var(--muted); font-size: 12.5px; margin: 20px 0 8px; text-transform: uppercase; letter-spacing: .08em; }
+  .divider::before, .divider::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+  .hidden { display: none !important; }
+
+  /* dashboard */
+  .searchrow input { width: 100%; font: inherit; font-size: 17px; padding: 15px 22px; border: 2px solid var(--line); border-radius: 999px; background: #fff; }
+  .results { display: grid; gap: 8px; margin-top: 12px; }
+  .res { text-align: left; background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 12px 16px; cursor: pointer; font: inherit; font-size: 15px; display: flex; justify-content: space-between; gap: 10px; }
+  .res:hover { border-color: var(--sienna); }
+  .res .loc { color: var(--muted); font-size: 13px; white-space: nowrap; }
+  .report { background: var(--card); border: 1px solid var(--line); border-radius: 20px; padding: 28px; margin-top: 20px; }
+  .rhead { display: flex; justify-content: space-between; gap: 14px; border-bottom: 1px solid var(--line); padding-bottom: 14px; margin-bottom: 8px; flex-wrap: wrap; }
+  .rhead h2 { font-size: 22px; }
+  .rhead .loc { color: var(--body); font-size: 14px; margin-top: 2px; }
+  .gradebox { text-align: center; border-radius: 14px; padding: 10px 16px; color: #fff; align-self: flex-start; }
+  .gradebox .g { font-family: Georgia, serif; font-size: 28px; font-weight: 700; line-height: 1; }
+  .gradebox .gl { font-size: 10.5px; font-weight: 700; letter-spacing: .07em; }
+  .sec-h { font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--sienna); margin: 18px 0 4px; }
+  .row { display: flex; justify-content: space-between; gap: 12px; padding: 8px 0; font-size: 15px; border-bottom: 1px dashed var(--line); }
+  .row .l { color: var(--body); }
+  .row .v { font-weight: 600; text-align: right; }
+  .v.ok { color: var(--green); } .v.warn { color: var(--red); } .v.mid { color: var(--amber); }
+  .bar { height: 8px; border-radius: 999px; background: var(--cream-2); margin: 4px 0 2px; overflow: hidden; }
+  .bar i { display: block; height: 100%; border-radius: 999px; background: var(--green); }
+  .bar.low i { background: var(--red); }
+  .barcap { font-size: 12.5px; color: var(--muted); margin-bottom: 6px; }
+  .flag { background: var(--red-bg); border: 1px solid #ecd5c9; color: var(--red); font-weight: 700; border-radius: 12px; padding: 11px 14px; margin: 10px 0; font-size: 14px; }
+  .price-block { background: var(--green-bg); border: 1px solid #cfe0d3; border-radius: 14px; padding: 16px 18px; margin-top: 14px; }
+  .price-block .big { font-family: Georgia, serif; font-size: 26px; font-weight: 700; color: var(--green); }
+  .actions { display: flex; gap: 10px; margin-top: 18px; flex-wrap: wrap; }
+  .compare-bar { position: sticky; bottom: 12px; background: var(--brown); color: #fff; border-radius: 999px; padding: 10px 18px; display: flex; gap: 12px; align-items: center; justify-content: space-between; margin-top: 18px; font-size: 14px; }
+  .compare-bar button { background: var(--sienna); border: none; color: #fff; font: inherit; font-weight: 600; padding: 8px 16px; border-radius: 999px; cursor: pointer; }
+  table.cmp { width: 100%; border-collapse: collapse; font-size: 14px; margin-top: 12px; }
+  .cmp th, .cmp td { padding: 9px 10px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+  .cmp thead th { font-size: 12px; text-transform: uppercase; letter-spacing: .05em; color: var(--body); background: var(--cream-2); }
+  .note { font-size: 12.5px; color: var(--muted); margin-top: 10px; }
+  footer { padding: 30px 0 46px; font-size: 12.5px; color: var(--muted); }
+  footer a { color: var(--sienna); }
+  @media print {
+    nav, .searchrow, .results, .actions, .compare-bar, footer, .al-box { display: none !important; }
+    body { background: #fff; }
+    .report { border: none; box-shadow: none; padding: 0; }
+  }
+  .al-box { background: var(--cream-2); border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; margin-top: 16px; font-size: 13.5px; color: var(--body); }
+</style>
+</head>
+<body>
+
+<nav aria-label="Main">
+  <div class="wrap nav-inner">
+    <a class="logo" href="../">Elder<em>Path</em><span class="pro-tag">PRO</span></a>
+    <div class="nav-right">
+      <span id="who" class="hidden"></span>
+      <button class="btn ghost hidden" id="signout" type="button" style="padding:8px 16px;font-size:13.5px">Sign out</button>
+      <a href="../check/" style="color:var(--sienna);font-weight:600;text-decoration:none">Free lookup</a>
+    </div>
+  </div>
+</nav>
+
+<main class="wrap" id="main">
+
+  <!-- VIEW: signed out -->
+  <section class="panel" id="view-auth">
+    <h1>Sign in to ElderPath <span style="color:var(--sienna)">Pro</span></h1>
+    <p class="sub">The complete safety file on any of 14,700 US nursing facilities — full staffing analytics with state percentiles, penalty history, real prices reported by families, and side-by-side comparison. One sign-in, no password.</p>
+    <div id="step-email">
+      <div class="field">
+        <input id="email" type="email" placeholder="you@example.com" aria-label="Email address" autocomplete="email">
+        <button class="btn" id="send-otp" type="button">Email me a sign-in code</button>
+      </div>
+    </div>
+    <div id="step-code" class="hidden">
+      <div class="field">
+        <input id="otp" type="text" inputmode="numeric" placeholder="6-digit code from your email" aria-label="Sign-in code">
+        <button class="btn" id="verify-otp" type="button">Sign in</button>
+      </div>
+    </div>
+    <p class="msg" id="auth-msg" aria-live="polite"></p>
+  </section>
+
+  <!-- VIEW: signed in, not pro -->
+  <section class="panel hidden" id="view-unlock">
+    <h1>Unlock the full reports</h1>
+    <p class="sub">You're signed in. Pro is a one-time purchase — no subscription, founding members keep it for life.</p>
+    <p class="price-tag" id="price-label">$29 · one-time · founding access</p>
+    <ul class="perks">
+      <li>Everything on every facility: complete staffing analytics (RN, weekend, turnover) with <strong>state percentile rankings</strong></li>
+      <li>Full penalty file: fines, payment denials, deficiency history across inspection cycles</li>
+      <li><strong>Real prices</strong> reported by resident families — the number facilities won't print</li>
+      <li>Compare up to 3 facilities side by side · print-ready report cards</li>
+      <li>Assisted-living report cards included as each state launches (Texas first)</li>
+    </ul>
+    <a class="btn" id="buy" href="#" target="_blank" rel="noopener">Buy Pro on Gumroad ↗</a>
+    <p class="note" id="buy-note"></p>
+    <div class="divider">then activate</div>
+    <div class="field">
+      <input id="license" type="text" placeholder="License key from your Gumroad receipt" aria-label="License key">
+      <button class="btn" id="activate" type="button">Activate</button>
+    </div>
+    <p class="msg" id="unlock-msg" aria-live="polite"></p>
+  </section>
+
+  <!-- VIEW: pro dashboard -->
+  <section class="hidden" id="view-app">
+    <div class="panel" style="padding:22px 26px">
+      <div class="searchrow">
+        <input id="q" type="search" placeholder="Search any facility — name, city, or state" aria-label="Search facilities" autocomplete="off">
+      </div>
+      <div class="results" id="results" aria-live="polite"></div>
+    </div>
+    <div id="report-slot"></div>
+    <div id="compare-slot"></div>
+    <div class="compare-bar hidden" id="compare-bar">
+      <span id="compare-label">0 pinned</span>
+      <span>
+        <button id="compare-go" type="button">Compare</button>
+        <button id="compare-clear" type="button" style="background:transparent;border:1px solid rgba(255,255,255,.4)">Clear</button>
+      </span>
+    </div>
+    <div class="al-box"><strong>Assisted living:</strong> state inspection records are being unified state by state (Texas first) and will appear here at no extra charge. Nursing-facility reports below are complete.</div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>Data: CMS Provider Information (May 2026) + ElderPath analysis + family-reported prices (moderated). Not medical, legal, or financial advice — always tour and verify. Questions or refunds: <a href="mailto:takyejun@gmail.com">takyejun@gmail.com</a> · <a href="../">ElderPath home</a></p>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+(function () {
+  var SUPA_URL = 'https://mrwgqbjldhywdocmyuop.supabase.co';
+  var SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1yd2dxYmpsZGh5d2RvY215dW9wIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODExMzg1NDcsImV4cCI6MjA5NjcxNDU0N30.txRl-6tuvNFKyrE5yPmHKz8vUqras7CFue6ETTYFqOY';
+  var db = window.supabase.createClient(SUPA_URL, SUPA_KEY);
+
+  var views = { auth: el('view-auth'), unlock: el('view-unlock'), app: el('view-app') };
+  function el(id) { return document.getElementById(id); }
+  function show(name) {
+    Object.keys(views).forEach(function (k) { views[k].classList.toggle('hidden', k !== name); });
+  }
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]; }); }
+  function money(n) { return n == null ? '—' : '$' + Math.round(n).toLocaleString('en-US'); }
+  var GRADE_COLORS = { 'A': '#2e7d4f', 'A-': '#2e7d4f', 'B': '#5f7d1f', 'C': '#9a6a00', 'D': '#b54708', 'F': '#b3261e', 'ND': '#6e6553' };
+
+  // ---------- state machine ----------
+  function route() {
+    db.auth.getSession().then(function (res) {
+      var session = res.data.session;
+      if (!session) { show('auth'); return; }
+      el('who').textContent = session.user.email;
+      el('who').classList.remove('hidden');
+      el('signout').classList.remove('hidden');
+      db.rpc('is_pro').then(function (r) {
+        if (r.data === true) { show('app'); el('q').focus(); }
+        else { loadConfig(); show('unlock'); }
+      });
+    });
+  }
+  el('signout').addEventListener('click', function () { db.auth.signOut().then(function () { location.reload(); }); });
+
+  // ---------- auth (email OTP) ----------
+  el('send-otp').addEventListener('click', function () {
+    var email = el('email').value.trim();
+    var msg = el('auth-msg');
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) { msg.className = 'msg err'; msg.textContent = 'Enter a valid email address.'; return; }
+    this.disabled = true; this.textContent = 'Sending…';
+    var btn = this;
+    db.auth.signInWithOtp({ email: email, options: { shouldCreateUser: true } }).then(function (r) {
+      btn.disabled = false; btn.textContent = 'Email me a sign-in code';
+      if (r.error) { msg.className = 'msg err'; msg.textContent = r.error.message; return; }
+      el('step-code').classList.remove('hidden');
+      msg.className = 'msg ok'; msg.textContent = 'Code sent — check ' + email + ' (and spam).';
+      el('otp').focus();
+    });
+  });
+  el('verify-otp').addEventListener('click', function () {
+    var email = el('email').value.trim();
+    var token = el('otp').value.trim();
+    var msg = el('auth-msg');
+    if (token.length < 6) { msg.className = 'msg err'; msg.textContent = 'Enter the 6-digit code from the email.'; return; }
+    this.disabled = true; this.textContent = 'Checking…';
+    var btn = this;
+    db.auth.verifyOtp({ email: email, token: token, type: 'email' }).then(function (r) {
+      btn.disabled = false; btn.textContent = 'Sign in';
+      if (r.error) { msg.className = 'msg err'; msg.textContent = 'That code didn’t work — codes expire after a few minutes.'; return; }
+      route();
+    });
+  });
+
+  // ---------- unlock ----------
+  function loadConfig() {
+    db.from('app_config').select('k, v').then(function (r) {
+      var cfg = {}; (r.data || []).forEach(function (row) { cfg[row.k] = row.v; });
+      if (cfg.price_label) el('price-label').textContent = cfg.price_label;
+      if (cfg.buy_url) { el('buy').href = cfg.buy_url; el('buy-note').textContent = 'Payment opens on Gumroad — your receipt email contains the license key.'; }
+      else { el('buy').classList.add('hidden'); el('buy-note').textContent = 'Checkout link is being configured — if you already have a license key, activate below.'; }
+    });
+  }
+  el('activate').addEventListener('click', function () {
+    var key = el('license').value.trim();
+    var msg = el('unlock-msg');
+    if (key.length < 8) { msg.className = 'msg err'; msg.textContent = 'Paste the license key from your Gumroad receipt.'; return; }
+    var btn = this; btn.disabled = true; btn.textContent = 'Activating…';
+    db.auth.getSession().then(function (res) {
+      var jwt = res.data.session ? res.data.session.access_token : '';
+      return fetch(SUPA_URL + '/functions/v1/activate', {
+        method: 'POST',
+        headers: { Authorization: 'Bearer ' + jwt, apikey: SUPA_KEY, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ license_key: key })
+      });
+    }).then(function (r) { return r.json().then(function (j) { return { ok: r.ok, body: j }; }); })
+      .then(function (res) {
+        btn.disabled = false; btn.textContent = 'Activate';
+        if (res.ok && res.body && res.body.ok) { msg.className = 'msg ok'; msg.textContent = 'Activated — loading your dashboard…'; setTimeout(route, 600); }
+        else { msg.className = 'msg err'; msg.textContent = (res.body && res.body.error) || 'Activation failed — try again.'; }
+      })
+      .catch(function () { btn.disabled = false; btn.textContent = 'Activate'; msg.className = 'msg err'; msg.textContent = 'Network problem — try again.'; });
+  });
+
+  // ---------- pro dashboard ----------
+  var debounce, pinned = [];
+  el('q').addEventListener('input', function () {
+    clearTimeout(debounce);
+    var v = this.value;
+    debounce = setTimeout(function () { search(v); }, 180);
+  });
+  function search(term) {
+    if (term.trim().length < 3) { el('results').innerHTML = ''; return; }
+    db.rpc('search_facilities', { q: term, lim: 8 }).then(function (r) {
+      var rows = r.data || [];
+      el('results').innerHTML = '';
+      rows.forEach(function (f) {
+        var b = document.createElement('button');
+        b.className = 'res'; b.type = 'button';
+        b.innerHTML = '<span>' + esc(f.name) + '</span><span class="loc">' + esc(f.city) + ', ' + esc(f.state) + ' · ' + esc(f.grade) + '</span>';
+        b.addEventListener('click', function () { openReport(f.ccn); });
+        el('results').appendChild(b);
+      });
+    });
+  }
+
+  function pctBar(label, pct, lowIsBad) {
+    if (pct == null) return '';
+    var low = pct < 40;
+    return '<div class="barcap">' + label + ': better than <strong>' + pct + '%</strong> of facilities in this state</div>' +
+      '<div class="bar' + (low ? ' low' : '') + '"><i style="width:' + Math.max(4, Math.min(100, pct)) + '%"></i></div>';
+  }
+
+  function openReport(ccn) {
+    db.rpc('pro_report', { p_ccn: ccn }).then(function (r) {
+      if (r.error || !r.data) { return; }
+      var d = r.data, f = d.facility, avg = d.state_avg || {};
+      var gc = GRADE_COLORS[f.grade] || '#6e6553';
+      var html =
+        '<div class="report" id="printable">' +
+        '<div class="rhead"><div>' +
+        '<h2>' + esc(f.name) + '</h2>' +
+        '<div class="loc">' + esc(f.addr) + ' · ' + esc(f.city) + ', ' + esc(f.state) + ' ' + esc(f.zip) + (f.county ? ' · ' + esc(f.county) + ' County' : '') + '</div>' +
+        '<div class="loc">' + esc(f.own) + (f.chain ? ' · ' + esc(f.chain) : '') + ' · ' + (f.beds || '—') + ' beds · CCN ' + esc(f.ccn) + '</div>' +
+        '</div><div class="gradebox" style="background:' + gc + '"><div class="g">' + esc(f.grade) + '</div><div class="gl">' + (f.score != null ? f.score + '/100' : 'no data') + '</div></div></div>' +
+        (f.f_abuse ? '<div class="flag">⚠ Federal abuse flag on current record</div>' : '') +
+        (f.f_sff ? '<div class="flag">⚠ Special Focus program: ' + esc(f.f_sff) + '</div>' : '') +
+        '<p class="sec-h">Ratings (CMS five-star)</p>' +
+        row('Overall', starTxt(f.r_overall)) + row('Health inspections', starTxt(f.r_health)) +
+        row('Staffing', starTxt(f.r_staff)) + row('Quality measures', starTxt(f.r_qm)) +
+        '<p class="sec-h">Staffing analytics</p>' +
+        pctBar('Total nurse staffing', d.pct_staffing_better_than, true) +
+        row('Total nurse hours / resident / day', numv(f.s_total, ' hrs') + stateAvg(avg.avg_hprd, ' hrs')) +
+        row('Registered-nurse hours', numv(f.s_rn, ' hrs') + stateAvg(avg.avg_rn, ' hrs')) +
+        row('Weekend staffing', numv(f.s_wkend, ' hrs')) +
+        row('Nursing staff turnover', numv(f.s_turn, '%') + stateAvg(avg.avg_turn, '%'), f.s_turn != null && avg.avg_turn != null && f.s_turn > avg.avg_turn ? 'warn' : 'ok') +
+        row('RN turnover', numv(f.s_rnturn, '%')) +
+        '<p class="sec-h">Inspections &amp; penalties</p>' +
+        pctBar('Deficiency record', d.pct_fewer_deficiencies_than, true) +
+        row('Deficiencies — latest cycle (' + esc(f.i_date || '—') + ')', numv(f.i_def1, '') + stateAvg(avg.avg_def1, '')) +
+        row('Deficiencies — prior cycles', numv(f.i_def23, '')) +
+        row('Infection-control citations', numv(f.i_infect, '')) +
+        row('Federal fines', (f.p_fines || 0) + ' · ' + money(f.p_usd), f.p_usd > 0 ? 'warn' : 'ok') +
+        row('Payment denials', numv(f.p_denials, ''), f.p_denials > 0 ? 'warn' : 'ok') +
+        '<p class="sec-h">Real prices · reported by families</p>' +
+        priceBlock(d.prices) +
+        '<div class="actions">' +
+        '<button class="btn ghost" id="pin" type="button">Pin to compare</button>' +
+        '<button class="btn ghost" id="print" type="button">Print / save PDF</button>' +
+        '<a class="btn ghost" target="_blank" rel="noopener" href="https://www.medicare.gov/care-compare/details/nursing-home/' + esc(f.ccn) + '?state=' + esc(f.state) + '">Verify on Medicare.gov ↗</a>' +
+        '</div>' +
+        '<p class="note">Generated ' + new Date().toLocaleDateString('en-US') + ' · CMS data May 2026 · ElderPath grade methodology at elderpath home → Our grading.</p>' +
+        '</div>';
+      el('report-slot').innerHTML = html;
+      el('compare-slot').innerHTML = '';
+      el('print').addEventListener('click', function () { window.print(); });
+      el('pin').addEventListener('click', function () { pin(d); });
+      el('report-slot').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  }
+  function row(label, val, cls) {
+    return '<div class="row"><span class="l">' + label + '</span><span class="v ' + (cls || '') + '">' + val + '</span></div>';
+  }
+  function starTxt(r) { return r == null ? 'not rated' : '★'.repeat(r) + '☆'.repeat(5 - r) + ' ' + r + '/5'; }
+  function numv(v, unit) { return v == null ? '—' : v + unit; }
+  function stateAvg(v, unit) { return v == null ? '' : ' <small style="color:var(--muted);font-weight:400">(state avg ' + v + unit + ')</small>'; }
+  function priceBlock(p) {
+    if (!p || !p.n) {
+      return '<div class="price-block"><div style="font-size:14px;color:var(--body)">No family price reports for this facility yet — be the first via the <a href="../check/" style="color:var(--green)">free lookup page</a>. Reports are anonymous and moderated.</div></div>';
+    }
+    return '<div class="price-block"><span class="big">' + money(p.avg) + '/mo</span>' +
+      '<div style="font-size:13.5px;color:var(--body)">average of ' + p.n + ' family report' + (p.n === 1 ? '' : 's') + ' · range ' + money(p.min) + ' – ' + money(p.max) + '</div></div>';
+  }
+
+  // ---------- compare ----------
+  function pin(d) {
+    if (pinned.find(function (x) { return x.facility.ccn === d.facility.ccn; })) return updateBar();
+    if (pinned.length >= 3) pinned.shift();
+    pinned.push(d); updateBar();
+  }
+  function updateBar() {
+    el('compare-bar').classList.toggle('hidden', pinned.length === 0);
+    el('compare-label').textContent = pinned.length + ' pinned: ' + pinned.map(function (x) { return x.facility.name.slice(0, 18); }).join(' · ');
+  }
+  el('compare-clear').addEventListener('click', function () { pinned = []; updateBar(); el('compare-slot').innerHTML = ''; });
+  el('compare-go').addEventListener('click', function () {
+    if (pinned.length < 2) return;
+    var rows = [
+      ['Grade', function (d) { return d.facility.grade + (d.facility.score != null ? ' · ' + d.facility.score + '/100' : ''); }],
+      ['CMS overall', function (d) { return starTxt(d.facility.r_overall); }],
+      ['Abuse flag', function (d) { return d.facility.f_abuse ? '⚠ YES' : 'no'; }],
+      ['Nurse hrs/day', function (d) { return numv(d.facility.s_total, ''); }],
+      ['Staffing percentile', function (d) { return d.pct_staffing_better_than != null ? 'better than ' + d.pct_staffing_better_than + '%' : '—'; }],
+      ['Turnover', function (d) { return numv(d.facility.s_turn, '%'); }],
+      ['Deficiencies (latest)', function (d) { return numv(d.facility.i_def1, ''); }],
+      ['Fines', function (d) { return money(d.facility.p_usd); }],
+      ['Family-reported price', function (d) { return d.prices && d.prices.n ? money(d.prices.avg) + '/mo (n=' + d.prices.n + ')' : '—'; }]
+    ];
+    var html = '<div class="report"><h2 style="font-size:20px">Side-by-side comparison</h2><table class="cmp"><thead><tr><th></th>' +
+      pinned.map(function (d) { return '<th>' + esc(d.facility.name) + '<br><small>' + esc(d.facility.city) + ', ' + esc(d.facility.state) + '</small></th>'; }).join('') +
+      '</tr></thead><tbody>' +
+      rows.map(function (r) { return '<tr><td><strong>' + r[0] + '</strong></td>' + pinned.map(function (d) { return '<td>' + r[1](d) + '</td>'; }).join('') + '</tr>'; }).join('') +
+      '</tbody></table>' +
+      '<div class="actions"><button class="btn ghost" onclick="window.print()" type="button">Print / save PDF</button></div></div>';
+    el('compare-slot').innerHTML = html;
+    el('report-slot').innerHTML = '';
+    el('compare-slot').scrollIntoView({ behavior: 'smooth' });
+  });
+
+  route();
+})();
+</script>
+</body>
+</html>

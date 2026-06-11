@@ -158,7 +158,10 @@
 <nav aria-label="Main">
   <div class="wrap nav-inner">
     <a class="logo" href="../">Elder<em>Path</em></a>
-    <a class="btn" href="../#join">Get early access</a>
+    <span>
+      <a href="../pro/" style="color:var(--sienna);font-weight:600;text-decoration:none;margin-right:14px">Pro</a>
+      <a class="btn" href="../#join">Get early access</a>
+    </span>
   </div>
 </nav>
 
@@ -280,7 +283,8 @@
           '<select id="pr-level" aria-label="Care level"><option value="nursing">Nursing care</option><option value="memory">Memory care</option><option value="assisted">Assisted living</option><option value="other">Other</option></select>' +
           '<button class="btn" id="pr-send" type="button">Submit</button>' +
           '</div><p class="pf-note">Goes into our real-pricing database (moderated before publication). No name, no email — just the number families never get upfront.</p>' +
-          '</details></div>';
+          '</details></div>' +
+          '<p style="margin-top:12px;font-size:13.5px"><a href="../pro/" style="color:var(--sienna);font-weight:700">Unlock the full report →</a> <span style="color:var(--muted)">staffing percentiles vs your state, full penalty file, family-reported prices, side-by-side compare.</span></p>';
         rc.insertBefore(div, anchor);
         var verify = rc.querySelector('a[href*="medicare.gov"]');
         if (verify) verify.href = 'https://www.medicare.gov/care-compare/details/nursing-home/' + encodeURIComponent(d.ccn) + '?state=' + encodeURIComponent(d.state);
