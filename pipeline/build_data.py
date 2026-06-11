@@ -131,6 +131,8 @@ for r in rows:
             "oldInsp": r["Most Recent Health Inspection More Than 2 Years Ago"].strip().upper() == "Y",
             "ownChg": r["Provider Changed Ownership in Last 12 Months"].strip().upper() == "Y",
         },
+        "lat": num(r.get("Latitude", "")),
+        "lng": num(r.get("Longitude", "")),
         "grade": compute_grade(h, s, q, fines, fines_usd, denials, abuse, sff),
         "grade_parts": {
             "inspection": None if h is None else round(star_score(h)),

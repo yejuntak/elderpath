@@ -46,6 +46,7 @@ def flatten(f):
         "chain_avg_overall": f.get("chain_info", {}).get("avg_overall"),
         "chain_avg_health": f.get("chain_info", {}).get("avg_health"),
         "chain_avg_staff": f.get("chain_info", {}).get("avg_staff"),
+        "lat": f.get("lat"), "lng": f.get("lng"),
         "gp_inspection": f.get("grade_parts", {}).get("inspection"),
         "gp_staffing": f.get("grade_parts", {}).get("staffing"),
         "gp_quality": f.get("grade_parts", {}).get("quality"),

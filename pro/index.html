@@ -30,6 +30,28 @@
   .perks .icon { color: var(--success); margin-top: 3px; }
   .price-tag { font-family: Georgia, serif; font-size: 22px; font-weight: 700; color: var(--primary); }
   .results { display: grid; gap: 8px; margin-top: 12px; }
+  /* guided search */
+  .wiz-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .wiz-grid .full { grid-column: 1 / -1; }
+  .wiz-label { font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--muted-foreground); margin: 4px 0 6px; display: block; }
+  .chips { display: flex; gap: 8px; flex-wrap: wrap; }
+  .stepper { display: flex; gap: 14px; align-items: center; margin-bottom: 14px; flex-wrap: wrap; }
+  .step-dot { display: inline-flex; align-items: center; gap: 7px; font-size: 13px; font-weight: 700; color: var(--muted-foreground); }
+  .step-dot .n { width: 22px; height: 22px; border-radius: 50%; background: var(--secondary); color: var(--secondary-foreground); display: inline-flex; align-items: center; justify-content: center; font-size: 12px; }
+  .step-dot.on { color: var(--primary); }
+  .step-dot.on .n { background: var(--primary); color: #fff; }
+  textarea.input { height: auto; min-height: 70px; padding: 12px 18px; border-radius: var(--radius); resize: vertical; }
+  .sl-item { display: flex; gap: 14px; align-items: flex-start; }
+  .sl-rank { flex-shrink: 0; width: 30px; height: 30px; border-radius: 50%; background: var(--inverse); color: #fff; font-weight: 700; font-size: 14px; display: inline-flex; align-items: center; justify-content: center; margin-top: 2px; }
+  .sl-body { flex: 1; min-width: 0; }
+  .sl-name { font-weight: 700; font-size: 16px; }
+  .sl-meta { font-size: 13px; color: var(--muted-foreground); margin: 1px 0 6px; }
+  .reason-chips { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px; }
+  .sl-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+  .caution { font-size: 12.5px; color: var(--destructive); font-weight: 600; margin-bottom: 6px; }
+  .mini-form { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+  .mini-form .input { flex: 1 1 200px; height: 40px; font-size: 14px; }
+  .mini-form .btn { height: 40px; font-size: 13.5px; padding: 0 16px; }
   .sec-h { font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--primary); margin: 18px 0 4px; }
   .bar { height: 8px; border-radius: var(--radius-full); background: var(--secondary); margin: 4px 0 2px; overflow: hidden; }
   .bar i { display: block; height: 100%; border-radius: var(--radius-full); background: var(--success); }
@@ -125,8 +147,79 @@
 
   <!-- VIEW: pro dashboard -->
   <section class="view hidden" id="view-app">
+
+    <div class="card" id="guided-card">
+      <div class="card-header">
+        <div class="stepper" aria-hidden="true">
+          <span class="step-dot on" id="dot-1"><span class="n">1</span>Tell us what's going on</span>
+          <span class="step-dot" id="dot-2"><span class="n">2</span>Review your shortlist</span>
+          <span class="step-dot" id="dot-3"><span class="n">3</span>Tour &amp; decide, supported</span>
+        </div>
+        <h2 class="card-title" style="font-size:21px">Guided search</h2>
+        <p class="card-description">Answer a few questions — you get a ranked shortlist of licensed facilities immediately, each with a full report card, tour questions, and concierge help when you want a human.</p>
+      </div>
+      <div class="card-content">
+        <div class="wiz-grid" id="wizard">
+          <div>
+            <label class="wiz-label" for="w-state">State (required)</label>
+            <select id="w-state" class="select" style="width:100%"><option value="" disabled selected>Choose state…</option></select>
+          </div>
+          <div>
+            <label class="wiz-label" for="w-city">City or town</label>
+            <input id="w-city" class="input" type="text" placeholder="e.g. Frisco" autocomplete="address-level2">
+          </div>
+          <div class="full">
+            <button class="btn btn-secondary btn-sm" id="w-geo" type="button"><svg class="icon icon-sm"><use href="../ui/lucide.svg#i-map-pin"/></svg>Use my location for distance ranking</button>
+            <span id="w-geo-status" style="font-size:12.5px;color:var(--muted-foreground);margin-left:8px"></span>
+          </div>
+          <div class="full">
+            <span class="wiz-label">Type of care needed</span>
+            <div class="chips" id="w-care">
+              <button class="toggle" type="button" data-v="nursing" aria-pressed="true">Nursing care</button>
+              <button class="toggle" type="button" data-v="memory" aria-pressed="false">Memory care</button>
+              <button class="toggle" type="button" data-v="rehab" aria-pressed="false">Short-term rehab</button>
+              <button class="toggle" type="button" data-v="unsure" aria-pressed="false">Not sure yet</button>
+            </div>
+          </div>
+          <div>
+            <label class="wiz-label" for="w-timeline">Timeline</label>
+            <select id="w-timeline" class="select" style="width:100%">
+              <option value="now">Now — urgent (discharge, crisis)</option>
+              <option value="3mo">Within 3 months</option>
+              <option value="12mo">3–12 months</option>
+              <option value="research">Just researching</option>
+            </select>
+          </div>
+          <div>
+            <label class="wiz-label" for="w-budget">Monthly budget (optional)</label>
+            <input id="w-budget" class="input" type="number" min="1000" max="50000" placeholder="$ / month">
+          </div>
+          <div class="full">
+            <span class="wiz-label">What matters most (pick any)</span>
+            <div class="chips" id="w-pri">
+              <button class="toggle" type="button" data-v="staffing" aria-pressed="false">Strong staffing</button>
+              <button class="toggle" type="button" data-v="clean" aria-pressed="false">Clean inspections</button>
+              <button class="toggle" type="button" data-v="small" aria-pressed="false">Smaller facility</button>
+              <button class="toggle" type="button" data-v="nonprofit" aria-pressed="false">Nonprofit</button>
+              <button class="toggle" type="button" data-v="nofines" aria-pressed="false">No fines</button>
+            </div>
+          </div>
+          <div class="full">
+            <label class="wiz-label" for="w-notes">Anything else we should know? (optional)</label>
+            <textarea id="w-notes" class="input" placeholder="e.g. Mom is being discharged Friday after a fall; she has early-stage dementia and a small dog she can't be without."></textarea>
+          </div>
+          <div class="full">
+            <button class="btn btn-lg" id="w-go" type="button"><svg class="icon icon-md"><use href="../ui/lucide.svg#i-clipboard-list"/></svg>Build my shortlist</button>
+            <div class="msgslot" id="w-msg" aria-live="polite"></div>
+          </div>
+        </div>
+        <div id="shortlist-slot"></div>
+      </div>
+    </div>
+
     <div class="card searchwrap">
       <div class="card-content" style="padding-top:20px">
+        <span class="wiz-label">Quick lookup</span>
         <input id="q" type="search" class="input input-lg" placeholder="Search any facility — name, city, or state" aria-label="Search facilities" autocomplete="off">
         <div class="results" id="results" aria-live="polite"></div>
       </div>
@@ -142,6 +235,33 @@
         </span>
       </div>
     </div>
+    <details class="card" style="margin-top:16px">
+      <summary style="padding:18px 24px;cursor:pointer;font-weight:700;font-size:16px">Before you sign anything — the contract checklist</summary>
+      <div class="card-content" style="padding-top:6px">
+        <ol style="margin-left:20px;display:grid;gap:8px;font-size:14.5px;color:var(--body-foreground)">
+          <li><strong>The all-in monthly number, in writing.</strong> Base rate + care-level charges + medication management + incontinence supplies + laundry. Ask which can change and with how much notice.</li>
+          <li><strong>Care-level reassessment.</strong> Who decides when care needs (and fees) increase, how often, and can you get an independent assessment?</li>
+          <li><strong>Discharge and eviction terms.</strong> Under what conditions can they ask your parent to leave? Hospital stays — is the bed held, at what cost?</li>
+          <li><strong>Medicaid policy.</strong> If savings run out, can your parent stay on Medicaid? Get it in writing — "Medicaid-pending" policies differ wildly.</li>
+          <li><strong>Deposits and refunds.</strong> Community fee refundable? Pro-rated month on move-out or death? (Families get burned here constantly.)</li>
+          <li><strong>Arbitration clause.</strong> Many contracts waive your right to sue. You can often decline this clause and still be admitted — ask.</li>
+          <li><strong>Responsible-party language.</strong> Never sign as personally financially responsible — sign as agent/POA only.</li>
+          <li><strong>Staffing commitments.</strong> Anything verbal ("an RN is always in the building") — ask them to write it in.</li>
+          <li><strong>Personal needs and extras.</strong> Salon, transport to appointments, activities — included or billed?</li>
+          <li><strong>Termination by you.</strong> Notice period and any penalty to move out if it isn't working.</li>
+        </ol>
+        <div class="actions">
+          <button class="btn btn-outline" onclick="window.print()" type="button"><svg class="icon icon-md"><use href="../ui/lucide.svg#i-file-text"/></svg>Print checklist</button>
+          <button class="btn btn-outline" id="contract-help" type="button"><svg class="icon icon-md"><use href="../ui/lucide.svg#i-scale"/></svg>Ask us to review a contract</button>
+        </div>
+        <div class="mini-form hidden" id="contract-form">
+          <input class="input" id="contract-contact" type="text" placeholder="Your email or phone">
+          <button class="btn" id="contract-send" type="button">Request review</button>
+        </div>
+        <p class="note">General consumer information, not legal advice — for legal questions use an elder-law attorney (eldercare locator: 1-800-677-1116).</p>
+      </div>
+    </details>
+
     <div class="alert al-note" style="margin-top:16px">
       <svg class="icon icon-md"><use href="../ui/lucide.svg#i-map-pin"/></svg>
       <span><span class="alert-title">Assisted living</span> State inspection records are being unified state by state (Texas first) and will appear here at no extra charge. Nursing-facility reports are complete.</span>
@@ -164,6 +284,7 @@
   var db = window.supabase.createClient(SUPA_URL, SUPA_KEY);
 
   function el(id) { return document.getElementById(id); }
+  var currentUid = null;
   var views = { auth: el('view-auth'), unlock: el('view-unlock'), app: el('view-app') };
   function show(name) { Object.keys(views).forEach(function (k) { views[k].classList.toggle('hidden', k !== name); }); }
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]; }); }
@@ -184,6 +305,7 @@
     db.auth.getSession().then(function (res) {
       var session = res.data.session;
       if (!session) { show('auth'); return; }
+      currentUid = session.user.id;
       el('who').textContent = session.user.email || 'guest session';
       el('who').classList.remove('hidden');
       el('signout').classList.remove('hidden');
@@ -269,6 +391,160 @@
         else { setMsg('unlock-msg', 'err', (res.body && res.body.error) || 'Activation failed — try again.'); }
       })
       .catch(function () { btn.disabled = false; setMsg('unlock-msg', 'err', 'Network problem — try again.'); });
+  });
+
+  // ---------- guided search ----------
+  var STATES = 'AK AL AR AZ CA CO CT DC DE FL GA GU HI IA ID IL IN KS KY LA MA MD ME MI MN MO MS MT NC ND NE NH NJ NM NV NY OH OK OR PA PR RI SC SD TN TX UT VA VT WA WI WV WY'.split(' ');
+  STATES.forEach(function (s) { var o = document.createElement('option'); o.value = s; o.textContent = s; el('w-state').appendChild(o); });
+  document.querySelectorAll('#w-care .toggle').forEach(function (t) {
+    t.addEventListener('click', function () {
+      document.querySelectorAll('#w-care .toggle').forEach(function (x) { x.setAttribute('aria-pressed', 'false'); });
+      t.setAttribute('aria-pressed', 'true');
+    });
+  });
+  document.querySelectorAll('#w-pri .toggle').forEach(function (t) {
+    t.addEventListener('click', function () { t.setAttribute('aria-pressed', t.getAttribute('aria-pressed') === 'true' ? 'false' : 'true'); });
+  });
+  var geo = { lat: null, lng: null };
+  el('w-geo').addEventListener('click', function () {
+    var st = el('w-geo-status'); st.textContent = 'Locating…';
+    if (!navigator.geolocation) { st.textContent = 'Not available — city ranking will be used.'; return; }
+    navigator.geolocation.getCurrentPosition(function (pos) {
+      geo.lat = pos.coords.latitude; geo.lng = pos.coords.longitude;
+      st.textContent = '✓ Location set — shortlist will rank by distance.';
+    }, function () { st.textContent = 'Permission denied — city ranking will be used.'; }, { timeout: 8000 });
+  });
+
+  function buildReasons(f, pri) {
+    var rs = [];
+    if (f.km != null) rs.push(f.km + ' km away');
+    else if (f.cityMatch) rs.push('In ' + f.city);
+    if (f.grade && f.grade.indexOf('A') === 0) rs.push('Grade ' + f.grade);
+    else if (f.grade === 'B') rs.push('Grade B');
+    if (pri.indexOf('staffing') >= 0 && f.s_total >= 3.8) rs.push(f.s_total + ' nurse hrs/day');
+    if (pri.indexOf('clean') >= 0 && (f.i_def1 || 0) <= 4) rs.push(f.i_def1 + ' deficiencies');
+    if (pri.indexOf('nofines') >= 0 && !(f.p_usd > 0)) rs.push('No federal fines');
+    if (pri.indexOf('small') >= 0 && f.beds && f.beds <= 80) rs.push(f.beds + ' beds');
+    if (pri.indexOf('nonprofit') >= 0 && /non.?profit/i.test(f.own || '')) rs.push('Nonprofit');
+    if (!rs.length) rs.push('Grade ' + f.grade, (f.i_def1 != null ? f.i_def1 + ' deficiencies' : ''));
+    return rs.filter(Boolean).slice(0, 4);
+  }
+
+  el('w-go').addEventListener('click', function () {
+    var state = el('w-state').value;
+    if (!state) { setMsg('w-msg', 'err', 'Pick a state first.'); return; }
+    var city = el('w-city').value.trim();
+    var care = (document.querySelector('#w-care .toggle[aria-pressed="true"]') || {}).dataset ? document.querySelector('#w-care .toggle[aria-pressed="true"]').dataset.v : 'unsure';
+    var pri = Array.from(document.querySelectorAll('#w-pri .toggle[aria-pressed="true"]')).map(function (t) { return t.dataset.v; });
+    var budget = parseInt(el('w-budget').value, 10) || null;
+    var notes = el('w-notes').value.trim();
+    var btn = this; btn.disabled = true;
+    setMsg('w-msg', 'ok', 'Building your shortlist…');
+    db.rpc('shortlist_pool', { p_state: state, p_lat: geo.lat, p_lng: geo.lng, p_city: city || null, p_lim: 80 })
+      .then(function (r) {
+        btn.disabled = false;
+        if (r.error) { setMsg('w-msg', 'err', 'Could not build the shortlist — try again.'); return; }
+        var pool = r.data || [];
+        if (!pool.length) { setMsg('w-msg', 'err', 'No licensed facilities found in ' + state + '.'); return; }
+        pool.forEach(function (f) { f.cityMatch = city && f.city && f.city.toLowerCase() === city.toLowerCase(); });
+        // Location dominates: with a city given, draw from that city (then its county) first.
+        if (city && !geo.lat) {
+          var inCity = pool.filter(function (f) { return f.cityMatch; });
+          if (inCity.length) {
+            var counties = {};
+            inCity.forEach(function (f) { if (f.county) counties[f.county] = true; });
+            var nearby = pool.filter(function (f) { return !f.cityMatch && f.county && counties[f.county]; });
+            pool = inCity.concat(nearby).concat(pool.filter(function (f) { return !f.cityMatch && !(f.county && counties[f.county]); }).slice(0, 10));
+            pool.forEach(function (f, i) { f._locTier = f.cityMatch ? 0 : (i < inCity.length + nearby.length ? 1 : 2); });
+          }
+        }
+        var clean = pool.filter(function (f) { return !f.f_abuse && !f.f_sff; });
+        var source = clean.length >= 6 ? clean : pool;
+        source.forEach(function (f) {
+          var s = (f.score == null ? 35 : f.score);
+          if (f.km != null) s += Math.max(0, 25 - f.km / 4);
+          else if (f._locTier === 0) s += 70;
+          else if (f._locTier === 1) s += 35;
+          else if (f.cityMatch) s += 15;
+          if (pri.indexOf('staffing') >= 0 && f.s_total) s += Math.min(10, Math.max(0, (f.s_total - 3.4) * 8));
+          if (pri.indexOf('clean') >= 0 && f.i_def1 != null) s += Math.max(0, 8 - f.i_def1);
+          if (pri.indexOf('small') >= 0 && f.beds) s += f.beds <= 80 ? 6 : 0;
+          if (pri.indexOf('nonprofit') >= 0 && /non.?profit/i.test(f.own || '')) s += 8;
+          if (pri.indexOf('nofines') >= 0 && !(f.p_usd > 0)) s += 6;
+          if (f.chain_avg_overall != null && Number(f.chain_avg_overall) < 2.5) s -= 8;
+          f._rank = s;
+        });
+        source.sort(function (a, b) { return b._rank - a._rank; });
+        var top = source.slice(0, 6);
+        var shortlist = top.map(function (f, i) {
+          return { rank: i + 1, ccn: f.ccn, name: f.name, city: f.city, state: f.state, km: f.km, grade: f.grade, reasons: buildReasons(f, pri), chain: f.chain, chain_n: f.chain_n, chain_avg: f.chain_avg_overall, abuse: f.f_abuse, sff: !!f.f_sff };
+        });
+        db.from('care_requests').insert({
+          user_id: currentUid, state: state, city: city || null, care_type: care, timeline: el('w-timeline').value,
+          budget: budget, priorities: pri, notes: notes || null, lat: geo.lat, lng: geo.lng, shortlist: shortlist
+        }).then(function () {});
+        renderShortlist(shortlist, care);
+        setMsg('w-msg', '', '');
+        el('dot-1').classList.remove('on'); el('dot-2').classList.add('on');
+      });
+  });
+
+  function renderShortlist(list, care) {
+    var html = '<hr class="separator"><h3 style="font-size:18px;margin-bottom:4px">Your shortlist — ' + list.length + ' licensed facilities</h3>' +
+      '<p class="note" style="margin:0 0 14px">Ranked for your answers from the latest federal record. Every pick is a starting point — the tour decides.' + (care === 'memory' ? ' Memory-care units aren’t in the federal dataset; confirm a secured unit when you call.' : '') + '</p>' +
+      '<div class="stack">' +
+      list.map(function (f) {
+        return '<div class="card" style="border-radius:var(--radius)"><div class="card-content" style="padding:16px 18px"><div class="sl-item">' +
+          '<span class="sl-rank">' + f.rank + '</span>' +
+          '<div class="sl-body">' +
+          '<div class="sl-name">' + esc(f.name) + ' <span class="badge badge-secondary">' + esc(f.grade) + '</span></div>' +
+          '<div class="sl-meta">' + esc(f.city) + ', ' + esc(f.state) + (f.km != null ? ' · ' + f.km + ' km' : '') + (f.chain && f.chain_n > 1 ? ' · ' + esc(f.chain) + ' (' + f.chain_n + ' facilities)' : '') + '</div>' +
+          (f.abuse || f.sff ? '<div class="caution">⚠ Carries a federal ' + (f.abuse ? 'abuse flag' : 'Special Focus status') + ' — included because few alternatives matched; read the full report first.</div>' : '') +
+          '<div class="reason-chips">' + f.reasons.map(function (r) { return '<span class="badge badge-success">' + esc(r) + '</span>'; }).join('') + '</div>' +
+          '<div class="sl-actions">' +
+          '<button class="btn btn-sm" data-open="' + esc(f.ccn) + '" type="button">Full report + tour kit</button>' +
+          '<button class="btn btn-sm btn-outline" data-tour="' + esc(f.ccn) + '" type="button">Have us schedule the tour</button>' +
+          '</div>' +
+          '<div class="mini-form hidden" data-tourform="' + esc(f.ccn) + '">' +
+          '<input class="input" type="text" placeholder="Your email or phone" aria-label="Contact for tour scheduling">' +
+          '<button class="btn" type="button" data-toursend="' + esc(f.ccn) + '">Request</button>' +
+          '</div>' +
+          '</div></div></div></div>';
+      }).join('') + '</div>';
+    el('shortlist-slot').innerHTML = html;
+    el('shortlist-slot').querySelectorAll('[data-open]').forEach(function (b) {
+      b.addEventListener('click', function () { el('dot-3').classList.add('on'); openReport(b.dataset.open); });
+    });
+    el('shortlist-slot').querySelectorAll('[data-tour]').forEach(function (b) {
+      b.addEventListener('click', function () {
+        var fEl = el('shortlist-slot').querySelector('[data-tourform="' + b.dataset.tour + '"]');
+        fEl.classList.toggle('hidden');
+      });
+    });
+    el('shortlist-slot').querySelectorAll('[data-toursend]').forEach(function (b) {
+      b.addEventListener('click', function () {
+        var wrap = b.parentElement;
+        var contact = wrap.querySelector('input').value.trim();
+        if (contact.length < 5) { wrap.querySelector('input').focus(); return; }
+        b.disabled = true; b.textContent = 'Sending…';
+        db.from('concierge_requests').insert({ user_id: currentUid, ccn: b.dataset.toursend, kind: 'tour', contact: contact, note: 'Tour scheduling request from guided search' })
+          .then(function (r) {
+            b.textContent = r.error ? 'Try again' : 'Requested ✓';
+            b.disabled = !!r.error ? false : true;
+            if (!r.error) { el('dot-3').classList.add('on'); }
+          });
+      });
+    });
+    el('shortlist-slot').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  el('contract-help').addEventListener('click', function () { el('contract-form').classList.toggle('hidden'); });
+  el('contract-send').addEventListener('click', function () {
+    var contact = el('contract-contact').value.trim();
+    if (contact.length < 5) { el('contract-contact').focus(); return; }
+    var b = this; b.disabled = true; b.textContent = 'Sending…';
+    db.from('concierge_requests').insert({ user_id: currentUid, kind: 'contract', contact: contact, note: 'Contract review request' })
+      .then(function (r) { b.textContent = r.error ? 'Try again' : 'Requested ✓'; if (r.error) b.disabled = false; });
   });
 
   // ---------- pro dashboard ----------
