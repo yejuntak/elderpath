@@ -16,10 +16,15 @@ def post(path, payload):
         URL + path, data=body, method="POST",
         headers={
             "apikey": KEY, "Authorization": "Bearer " + KEY,
-            "Content-Type": "application/json", "Prefer": "return=minimal",
+            "Content-Type": "application/json",
+            "Prefer": "return=minimal,resolution=merge-duplicates",
         })
-    with urllib.request.urlopen(req, timeout=120) as r:
-        return r.status
+    try:
+        with urllib.request.urlopen(req, timeout=120) as r:
+            return r.status
+    except urllib.error.HTTPError as e:
+        print(f"HTTP {e.code} on {path}: {e.read().decode()[:400]}")
+        raise
 
 def flatten(f):
     return {
@@ -32,6 +37,19 @@ def flatten(f):
         "s_wkend": f["staff"]["wkend"], "s_turn": f["staff"]["turn"], "s_rnturn": f["staff"]["rnturn"],
         "i_date": f["insp"]["date"] or None, "i_def1": f["insp"]["def1"],
         "i_def23": f["insp"]["def23"], "i_infect": f["insp"]["infect"],
+        "i_c1_std": f["insp"].get("c1_std"), "i_c1_complaint": f["insp"].get("c1_complaint"),
+        "i_c1_score": f["insp"].get("c1_score"), "i_c2_date": f["insp"].get("c2_date") or None,
+        "i_c23_std": f["insp"].get("c23_std"), "i_c23_complaint": f["insp"].get("c23_complaint"),
+        "i_weighted": f["insp"].get("weighted"),
+        "chain_id": f.get("chain_info", {}).get("id") or None,
+        "chain_n": f.get("chain_info", {}).get("n"),
+        "chain_avg_overall": f.get("chain_info", {}).get("avg_overall"),
+        "chain_avg_health": f.get("chain_info", {}).get("avg_health"),
+        "chain_avg_staff": f.get("chain_info", {}).get("avg_staff"),
+        "gp_inspection": f.get("grade_parts", {}).get("inspection"),
+        "gp_staffing": f.get("grade_parts", {}).get("staffing"),
+        "gp_quality": f.get("grade_parts", {}).get("quality"),
+        "gp_accountability": f.get("grade_parts", {}).get("accountability"),
         "p_fines": f["pen"]["fines"], "p_usd": f["pen"]["usd"], "p_denials": f["pen"]["denials"],
         "f_abuse": f["flags"]["abuse"], "f_sff": f["flags"]["sff"] or "",
         "f_oldinsp": f["flags"]["oldInsp"], "f_ownchg": f["flags"]["ownChg"],

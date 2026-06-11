@@ -109,6 +109,20 @@ for r in rows:
             "def1": num(r["Rating Cycle 1 Total Number of Health Deficiencies"]),
             "def23": num(r["Rating Cycle 2/3 Total Number of Health Deficiencies"]),
             "infect": num(r["Number of Citations from Infection Control Inspections"]),
+            "c1_std": num(r["Rating Cycle 1 Number of Standard Health Deficiencies"]),
+            "c1_complaint": num(r["Rating Cycle 1 Number of Complaint Health Deficiencies"]),
+            "c1_score": num(r["Rating Cycle 1 Total Health Score"]),
+            "c2_date": r["Rating Cycle 2 Standard Health Survey Date"].strip(),
+            "c23_std": num(r["Rating Cycle 2 Number of Standard Health Deficiencies"]),
+            "c23_complaint": num(r["Rating Cycle 2/3 Number of Complaint Health Deficiencies"]),
+            "weighted": num(r["Total Weighted Health Survey Score"]),
+        },
+        "chain_info": {
+            "id": r.get("Chain ID", "").strip(),
+            "n": num(r.get("Number of Facilities in Chain", "")),
+            "avg_overall": num(r.get("Chain Average Overall 5-star Rating", "")),
+            "avg_health": num(r.get("Chain Average Health Inspection Rating", "")),
+            "avg_staff": num(r.get("Chain Average Staffing Rating", "")),
         },
         "pen": {"fines": fines, "usd": fines_usd, "denials": denials},
         "flags": {
@@ -118,6 +132,12 @@ for r in rows:
             "ownChg": r["Provider Changed Ownership in Last 12 Months"].strip().upper() == "Y",
         },
         "grade": compute_grade(h, s, q, fines, fines_usd, denials, abuse, sff),
+        "grade_parts": {
+            "inspection": None if h is None else round(star_score(h)),
+            "staffing": None if s is None else round(star_score(s)),
+            "quality": None if q is None else round(star_score(q)),
+            "accountability": round(accountability_score(fines, fines_usd, denials)),
+        },
     }
     states[st].append(fac)
 

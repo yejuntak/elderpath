@@ -188,7 +188,11 @@
       el('who').classList.remove('hidden');
       el('signout').classList.remove('hidden');
       db.rpc('is_pro').then(function (r) {
-        if (r.data === true) { show('app'); el('q').focus(); }
+        if (r.data === true) {
+          show('app');
+          var deep = new URLSearchParams(location.search).get('ccn');
+          if (deep) openReport(deep); else el('q').focus();
+        }
         else { loadConfig(); show('unlock'); }
       });
     });
@@ -301,6 +305,45 @@
   function starTxt(r) { return r == null ? 'not rated' : '★'.repeat(r) + '☆'.repeat(5 - r) + ' ' + r + '/5'; }
   function numv(v, unit) { return v == null ? '—' : v + unit; }
   function stateAvg(v, unit) { return v == null ? '' : ' <small style="color:var(--muted-foreground);font-weight:400">(state avg ' + v + unit + ')</small>'; }
+  function gradeBreakdown(f) {
+    var parts = [
+      ['Inspections', f.gp_inspection, 40], ['Staffing', f.gp_staffing, 25],
+      ['Quality', f.gp_quality, 20], ['Accountability', f.gp_accountability, 15]
+    ];
+    return parts.map(function (p) {
+      if (p[1] == null) return '<div class="barcap">' + p[0] + ' (' + p[2] + '% of grade): no data</div>';
+      return '<div class="barcap">' + p[0] + ' <span style="color:var(--muted-foreground)">(' + p[2] + '% of grade)</span>: <strong>' + p[1] + '/100</strong></div>' +
+        '<div class="bar' + (p[1] < 40 ? ' low' : '') + '"><i style="width:' + Math.max(4, Math.min(100, p[1])) + '%"></i></div>';
+    }).join('');
+  }
+  function chainPanel(f) {
+    if (!f.chain || !f.chain_n || f.chain_n < 2) return '';
+    var a = f.chain_avg_overall != null ? Number(f.chain_avg_overall) : null;
+    var warn = a != null && a < 3;
+    return '<p class="sec-h">Operator track record</p>' +
+      '<div class="alert' + (warn ? ' alert-destructive' : '') + '" style="margin:6px 0 4px">' +
+      '<svg class="icon icon-md"><use href="../ui/lucide.svg#i-' + (warn ? 'triangle-alert' : 'badge-check') + '"/></svg>' +
+      '<span><span class="alert-title">' + esc(f.chain) + ' operates ' + f.chain_n + ' facilities</span>' +
+      (a != null ? 'Across the whole chain they average <strong>' + a + '/5 overall</strong>' +
+        (f.chain_avg_health != null ? ' and <strong>' + f.chain_avg_health + '/5 on inspections</strong>' : '') +
+        (warn ? ' — a below-average operator. Judge the company, not just the building.' : '.') : '') +
+      '</span></div>';
+  }
+  function tourQuestions(f, avg) {
+    var qs = [];
+    if (f.f_abuse) qs.push('CMS currently flags this facility for an abuse citation. What happened, what changed, and who was held accountable?');
+    if ((f.i_c1_complaint || 0) > 0) qs.push(f.i_c1_complaint + ' of the latest deficiencies came from complaint investigations, not routine visits. What were the complaints?');
+    if (f.s_turn != null && avg.avg_turn != null && f.s_turn > avg.avg_turn) qs.push('Nursing turnover is ' + f.s_turn + '% vs ' + avg.avg_turn + '% state average. How long have the current director of nursing and charge nurses been here?');
+    if (f.s_wkend != null && f.s_total != null && f.s_wkend < f.s_total * 0.85) qs.push('Weekend staffing (' + f.s_wkend + ' hrs) drops well below weekday (' + f.s_total + ' hrs). Who covers Saturday night, specifically?');
+    if (f.s_rn != null && avg.avg_rn != null && f.s_rn < avg.avg_rn) qs.push('RN hours (' + f.s_rn + '/day) are below the state average (' + avg.avg_rn + '). When is an RN physically in the building?');
+    if ((f.p_fines || 0) > 0) qs.push('Federal records show ' + f.p_fines + ' fine' + (f.p_fines === 1 ? '' : 's') + ' totaling ' + money(f.p_usd) + '. What were they for, and what changed since?');
+    if (f.f_ownchg) qs.push('Ownership changed in the last 12 months. What stayed the same — staff, management, policies?');
+    if (f.f_oldinsp) qs.push('The last standard inspection is over 2 years old. Ask to see their most recent internal quality audits.');
+    if (!qs.length) qs.push('The record here is comparatively clean. Still ask: current staff-to-resident ratio on nights and weekends, and the full monthly cost in writing — base rent plus every care-level fee.');
+    return '<p class="sec-h">Ask these on your tour <span style="color:var(--muted-foreground);text-transform:none;letter-spacing:0">· generated from this facility\'s record</span></p>' +
+      '<ol style="margin:6px 0 4px 20px;font-size:14.5px;color:var(--body-foreground);display:grid;gap:8px">' +
+      qs.map(function (q) { return '<li>' + q + '</li>'; }).join('') + '</ol>';
+  }
   function priceBlock(p) {
     if (!p || !p.n) {
       return '<div class="price-summary"><span style="font-size:14px;color:var(--body-foreground)">No family price reports yet — be the first via the <a href="../check/" style="color:var(--success)">free lookup</a>. Anonymous, moderated.</span></div>';
@@ -322,6 +365,8 @@
         '<span class="grade-chip" data-grade="' + esc(gradeKey(f.grade)) + '"><span class="g">' + esc(f.grade) + '</span><span class="gl">' + (f.score != null ? f.score + '/100' : 'no data') + '</span></span></div>' +
         (f.f_abuse ? '<div class="alert alert-destructive" style="margin:10px 0"><svg class="icon icon-md"><use href="../ui/lucide.svg#i-shield-alert"/></svg><span><span class="alert-title">Federal abuse flag</span> on the current record</span></div>' : '') +
         (f.f_sff ? '<div class="alert alert-destructive" style="margin:10px 0"><svg class="icon icon-md"><use href="../ui/lucide.svg#i-triangle-alert"/></svg><span><span class="alert-title">Special Focus program</span> ' + esc(f.f_sff) + '</span></div>' : '') +
+        '<p class="sec-h">How the grade breaks down</p>' + gradeBreakdown(f) +
+        chainPanel(f) +
         '<p class="sec-h">Ratings (CMS five-star)</p>' +
         row('Overall', starTxt(f.r_overall)) + row('Health inspections', starTxt(f.r_health)) +
         row('Staffing', starTxt(f.r_staff)) + row('Quality measures', starTxt(f.r_qm)) +
@@ -332,13 +377,17 @@
         row('Weekend staffing', numv(f.s_wkend, ' hrs')) +
         row('Nursing staff turnover', numv(f.s_turn, '%') + stateAvg(avg.avg_turn, '%'), f.s_turn != null && avg.avg_turn != null && f.s_turn > avg.avg_turn ? 'value-destructive' : 'value-success') +
         row('RN turnover', numv(f.s_rnturn, '%')) +
-        '<p class="sec-h">Inspections &amp; penalties</p>' +
+        '<p class="sec-h">Inspection history</p>' +
         pctBar('Deficiency record', d.pct_fewer_deficiencies_than) +
-        row('Deficiencies — latest cycle (' + esc(f.i_date || '—') + ')', numv(f.i_def1, '') + stateAvg(avg.avg_def1, '')) +
-        row('Deficiencies — prior cycles', numv(f.i_def23, '')) +
+        row('Latest cycle (' + esc(f.i_date || '—') + ') — total deficiencies', numv(f.i_def1, '') + stateAvg(avg.avg_def1, '')) +
+        row('&nbsp;&nbsp;↳ from routine inspection / from complaints', numv(f.i_c1_std, '') + ' / ' + numv(f.i_c1_complaint, ''), (f.i_c1_complaint || 0) > 0 ? 'value-destructive' : '') +
+        row('Prior cycle (' + esc(f.i_c2_date || '—') + ') — total deficiencies', numv(f.i_def23, '')) +
+        row('&nbsp;&nbsp;↳ from routine inspection / from complaints', numv(f.i_c23_std, '') + ' / ' + numv(f.i_c23_complaint, ''), (f.i_c23_complaint || 0) > 0 ? 'value-destructive' : '') +
+        row('Weighted health survey score <small style="color:var(--muted-foreground)">(lower is better)</small>', numv(f.i_weighted, '')) +
         row('Infection-control citations', numv(f.i_infect, '')) +
         row('Federal fines', (f.p_fines || 0) + ' · ' + money(f.p_usd), f.p_usd > 0 ? 'value-destructive' : 'value-success') +
         row('Payment denials', numv(f.p_denials, ''), f.p_denials > 0 ? 'value-destructive' : 'value-success') +
+        tourQuestions(f, avg) +
         '<p class="sec-h">Real prices · reported by families</p>' +
         priceBlock(d.prices) +
         '<div class="actions">' +

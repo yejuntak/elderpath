@@ -167,7 +167,12 @@
   footer a { color: var(--sienna); }
   .toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: 26px; background: var(--ink); color: #fff; padding: 11px 20px; border-radius: 999px; font-size: 14px; opacity: 0; transition: opacity .25s; pointer-events: none; }
   .toast.show { opacity: 1; }
-  .xtra-head { font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--sienna); margin: 16px 0 2px; }
+  .xtra-head { font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--sienna); margin: 16px 0 2px; display: flex; align-items: center; gap: 6px; }
+  .pro-tease { background: var(--cream-2); border: 1.5px solid var(--line); border-radius: 14px; padding: 16px 18px; margin-top: 14px; }
+  .pro-tease .tease-hook { font-size: 14.5px; color: var(--body); margin: 6px 0 10px; }
+  .tease-list { list-style: none; display: grid; gap: 7px; margin: 0 0 14px; }
+  .tease-list li { display: flex; align-items: center; gap: 8px; font-size: 13.5px; color: var(--muted); }
+  .tease-list .icon { width: 13px; height: 13px; color: var(--muted); }
   .price-box { background: var(--cream-2); border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; margin-top: 14px; }
   .price-box summary { cursor: pointer; font-weight: 700; font-size: 15px; color: var(--ink); }
   .price-box .pf { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
@@ -292,23 +297,16 @@
   function enrichCard(f) {
     var rc = document.getElementById('rc');
     if (!rc) return;
-    apiGet('/rest/v1/facilities?select=*&state=eq.' + encodeURIComponent(f.st) + '&name=ilike.' + encodeURIComponent(f.name.replace(/[%_]/g, '')) + '&limit=1')
+    apiGet('/rest/v1/facilities?select=ccn,state,chain,chain_n&state=eq.' + encodeURIComponent(f.st) + '&name=ilike.' + encodeURIComponent(f.name.replace(/[%_]/g, '')) + '&limit=1')
       .then(function (rows) {
         var d = rows && rows[0];
         var anchor = rc.querySelector('.src');
         if (!d || !anchor || !document.getElementById('rc')) return;
+        var hook = (d.chain && d.chain_n > 1)
+          ? 'This building is one of <strong>' + d.chain_n + ' facilities</strong> run by ' + esc(d.chain) + ' — the full report grades the whole operator, not just this address.'
+          : 'The full report grades this facility on our published methodology and tells you exactly what to ask on a tour.';
         var div = document.createElement('div');
         div.innerHTML =
-          '<p class="xtra-head">Full record · live from the ElderPath database</p>' +
-          xrow('ElderPath grade <small>(<a href="../#method" style="color:var(--sienna)">methodology</a>)</small>', d.grade === 'ND' ? 'ND — not enough data' : esc(d.grade) + ' · ' + d.score + '/100', d.grade && d.grade.indexOf('A') === 0 ? 'ok' : (d.grade === 'F' || d.grade === 'D' ? 'warn' : '')) +
-          xrow('Address', esc(d.addr) + ', ' + esc(d.city) + ', ' + esc(d.state) + ' ' + esc(d.zip) + (d.county ? ' · ' + esc(d.county) + ' County' : '')) +
-          xrow('Ownership', esc(d.own) + (d.chain ? ' · ' + esc(d.chain) : '') + (d.beds ? ' · ' + d.beds + ' beds' : '')) +
-          xrow('RN hours / resident / day', d.s_rn != null ? d.s_rn + ' hrs' : null) +
-          xrow('Weekend staffing', d.s_wkend != null ? d.s_wkend + ' hrs' : null) +
-          xrow('Nursing staff turnover', d.s_turn != null ? d.s_turn + '%' : null, d.s_turn > 53 ? 'warn' : '') +
-          xrow('Deficiencies, prior inspection cycles', d.i_def23) +
-          xrow('Infection-control citations', d.i_infect) +
-          xrow('Medicare/Medicaid payment denials', d.p_denials, d.p_denials > 0 ? 'warn' : '') +
           '<div class="price-box"><details><summary>💵 Know what this facility really costs? Share it (anonymous)</summary>' +
           '<div class="pf">' +
           '<input id="pr-usd" type="number" min="500" max="50000" placeholder="Monthly cost in USD" aria-label="Monthly cost in US dollars">' +
@@ -316,7 +314,19 @@
           '<button class="btn" id="pr-send" type="button">Submit</button>' +
           '</div><p class="pf-note">Goes into our real-pricing database (moderated before publication). No name, no email — just the number families never get upfront.</p>' +
           '</details></div>' +
-          '<p style="margin-top:12px;font-size:13.5px"><a href="../pro/" style="color:var(--sienna);font-weight:700">Unlock the full report →</a> <span style="color:var(--muted)">staffing percentiles vs your state, full penalty file, family-reported prices, side-by-side compare.</span></p>';
+          '<div class="pro-tease">' +
+          '<p class="xtra-head">' + ICON('lock') + ' In the full report (Pro)</p>' +
+          '<p class="tease-hook">' + hook + '</p>' +
+          '<ul class="tease-list">' +
+          '<li>' + ICON('lock') + 'ElderPath grade with full component breakdown</li>' +
+          '<li>' + ICON('lock') + 'Operator track record — every facility this chain runs, averaged</li>' +
+          '<li>' + ICON('lock') + 'Staffing percentiles vs your state (RN, weekend, turnover)</li>' +
+          '<li>' + ICON('lock') + 'Inspection history: complaint-driven vs routine deficiencies, two cycles</li>' +
+          '<li>' + ICON('lock') + '"Ask these on your tour" — questions generated from this record</li>' +
+          '<li>' + ICON('lock') + 'Real prices reported by families · compare 3 side by side · print</li>' +
+          '</ul>' +
+          '<a class="btn" href="../pro/?ccn=' + encodeURIComponent(d.ccn) + '">Unlock the full report</a>' +
+          '</div>';
         rc.insertBefore(div, anchor);
         var verify = rc.querySelector('a[href*="medicare.gov"]');
         if (verify) verify.href = 'https://www.medicare.gov/care-compare/details/nursing-home/' + encodeURIComponent(d.ccn) + '?state=' + encodeURIComponent(d.state);
