@@ -46,12 +46,15 @@
   .nav-inner { display: flex; align-items: center; justify-content: space-between; height: 64px; }
   .logo { font-family: Georgia, serif; font-weight: 700; font-size: 20px; color: var(--ink); text-decoration: none; }
   .logo em { font-style: italic; color: var(--sienna); }
+  .nav-links { display: flex; align-items: center; gap: 22px; }
+  .nav-link { color: var(--body); font-size: 14.5px; font-weight: 600; text-decoration: none; }
+  .nav-link:hover { color: var(--sienna); }
   /* .btn comes from the UI library (flat, icon-ready) */
-  header.h { padding: 56px 0 28px; text-align: center; }
+  header.h { padding: 48px 0 26px; text-align: center; }
   .kicker { display: block; font-size: 12.5px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: var(--sienna); margin-bottom: 14px; }
-  h1 { font-size: clamp(30px, 5.4vw, 46px); margin-bottom: 14px; }
-  .sub { color: var(--body); max-width: 56ch; margin: 0 auto; }
-  .searchbox { position: relative; margin: 28px 0 8px; }
+  h1 { font-size: clamp(30px, 5.4vw, 46px); margin-bottom: 16px; }
+  .sub { color: var(--body); max-width: 52ch; margin: 0 auto; font-size: 16px; }
+  .searchbox { position: relative; margin: 26px 0 10px; }
   .searchbox > .icon {
     position: absolute; left: 22px; top: 50%; transform: translateY(-50%);
     width: 20px; height: 20px; color: var(--muted); pointer-events: none;
@@ -62,38 +65,59 @@
   }
   .searchbox input:focus { border-color: var(--sienna); }
   .hint { font-size: 13px; color: var(--muted); text-align: center; }
+
+  /* control bar: wrapping pill toggles (robust on mobile) + distinct state filter */
+  .controls { display: flex; gap: 10px; justify-content: center; align-items: center; flex-wrap: wrap; margin-top: 18px; }
+  .seg { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+  .seg-btn {
+    display: inline-flex; align-items: center; gap: 7px; height: 44px; padding: 0 16px;
+    border: 1.5px solid var(--line); background: var(--card); border-radius: 999px; cursor: pointer; white-space: nowrap;
+    font-family: inherit; font-size: 13.5px; font-weight: 600; color: var(--body);
+    transition: background .15s, color .15s, border-color .15s;
+  }
+  .seg-btn .icon { width: 16px; height: 16px; }
+  .seg-btn:hover { border-color: var(--sienna); color: var(--sienna); }
+  .seg-btn[aria-pressed="true"] { background: var(--sienna); color: #fff; border-color: var(--sienna); }
+  .state-filter {
+    position: relative; display: inline-flex; align-items: center;
+    height: 44px; border: 1.5px solid var(--line); border-radius: 999px; background: var(--card);
+  }
+  .state-filter > .icon { position: absolute; left: 15px; width: 16px; height: 16px; color: var(--muted); pointer-events: none; }
+  .state-filter select {
+    appearance: none; -webkit-appearance: none; border: none; background: transparent;
+    font-family: inherit; font-size: 14px; font-weight: 600; color: var(--ink); cursor: pointer;
+    height: 100%; padding: 0 38px 0 39px; border-radius: 999px;
+    background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='7'%3E%3Cpath d='M1 1l4.5 4.5L10 1' stroke='%236e6553' stroke-width='1.6' fill='none'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 16px center;
+  }
+
   .empty {
     text-align: center; color: var(--body); font-size: 15px;
-    background: var(--card); border: 1.5px dashed var(--line); border-radius: 14px; padding: 18px 20px;
+    background: var(--card); border: 1.5px dashed var(--line); border-radius: 16px; padding: 22px 20px; margin-top: 18px;
   }
-  .results { margin: 14px 0 0; display: grid; gap: 8px; }
-  .res {
-    text-align: left; background: var(--card); border: 1px solid var(--line); border-radius: 14px;
-    padding: 13px 18px; cursor: pointer; font-family: inherit; font-size: 15.5px; color: var(--ink);
-    display: flex; justify-content: space-between; gap: 12px; align-items: center; width: 100%;
+
+  /* results: ONE bordered panel with divider rows (a real ranking table, not a card stack) */
+  .results { margin-top: 18px; }
+  .panel { background: var(--card); border: 1.5px solid var(--line); border-radius: 16px; overflow: hidden; }
+  .panel-head {
+    display: flex; align-items: baseline; justify-content: space-between; gap: 12px;
+    padding: 13px 18px; background: var(--cream-2); border-bottom: 1.5px solid var(--line);
   }
-  .res:hover { border-color: var(--sienna); }
-  .res .loc { color: var(--muted); font-size: 13.5px; white-space: nowrap; }
-  .browse-row { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-top: 14px; }
-  .browse-row select {
-    font-family: inherit; font-size: 13.5px; font-weight: 600; color: var(--ink); height: 44px;
-    background: var(--card); border: 1.5px solid var(--line); border-radius: 999px; padding: 0 14px;
+  .panel-head .pt { font-size: 13.5px; font-weight: 700; color: var(--ink); }
+  .panel-head .pc { font-size: 12.5px; color: var(--muted); white-space: nowrap; }
+  .row-item {
+    display: flex; align-items: center; gap: 14px; width: 100%; text-align: left;
+    background: none; border: none; border-top: 1px solid var(--line); cursor: pointer;
+    padding: 12px 18px; font-family: inherit; transition: background .12s;
   }
-  .chip {
-    display: inline-flex; align-items: center; gap: 7px; height: 44px;
-    font-family: inherit; font-size: 13.5px; font-weight: 600; color: var(--body); cursor: pointer;
-    background: var(--card); border: 1.5px solid var(--line); border-radius: 999px; padding: 0 16px;
-    transition: border-color .15s, color .15s, background .15s;
-  }
-  .chip .icon { width: 17px; height: 17px; }
-  .chip:hover { border-color: var(--sienna); color: var(--sienna); }
-  .chip[aria-pressed="true"] { border-color: var(--sienna); color: var(--sienna); background: var(--accent); }
-  .list-head { font-size: 14px; color: var(--muted); margin: 16px 0 6px; text-align: center; }
-  .res .badge.warn {
-    font-size: 12.5px; font-weight: 700; white-space: nowrap; color: var(--red);
-    background: var(--red-bg); border: 1px solid var(--destructive-border);
-    border-radius: 999px; padding: 6px 11px;
-  }
+  .row-item:first-child { border-top: none; }
+  .row-item:hover { background: var(--cream-2); }
+  .row-item .rank { flex: 0 0 20px; text-align: right; font-size: 13px; font-weight: 700; color: var(--muted); font-variant-numeric: tabular-nums; }
+  .row-item .body { flex: 1 1 auto; min-width: 0; }
+  .row-item .name { font-size: 15px; font-weight: 600; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .row-item .loc { font-size: 12.5px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 1px; }
+  .row-item .metric { flex: 0 0 auto; font-size: 14.5px; font-weight: 700; color: var(--red); font-variant-numeric: tabular-nums; }
+  .row-item .chev { flex: 0 0 auto; width: 18px; height: 18px; color: var(--muted); }
   body.embed nav, body.embed .cta, body.embed section.about, body.embed footer, body.embed .embed-box { display: none; }
   body.embed header.h { padding: 22px 0 14px; }
   body.embed h1 { font-size: 26px; }
@@ -158,10 +182,10 @@
 <nav aria-label="Main">
   <div class="wrap nav-inner">
     <a class="logo" href="../">Elder<em>Path</em></a>
-    <span>
-      <a href="../pro/" style="color:var(--sienna);font-weight:600;text-decoration:none;margin-right:14px">Pro</a>
-      <a class="btn" href="../#join">Get early access</a>
-    </span>
+    <div class="nav-links">
+      <a class="nav-link" href="../pro/">Pro</a>
+      <a class="btn btn-sm" href="../#join">Get early access</a>
+    </div>
   </div>
 </nav>
 
@@ -176,14 +200,19 @@
     <svg class="icon" aria-hidden="true"><use href="../ui/lucide.svg#i-search"/></svg>
     <input id="q" type="search" placeholder="Facility name, city, or state — try your hometown" aria-label="Search nursing homes by name, city, or state" autocomplete="off">
   </div>
-  <p class="hint" id="hint">Search by name or hometown — or browse a list below, for any state</p>
-  <div class="browse-row" role="group" aria-label="Browse lists">
-    <select id="bst" aria-label="State filter">
-      <option value="">All states</option>
-    </select>
-    <button class="chip" type="button" aria-pressed="false" data-browse="fines"><svg class="icon" aria-hidden="true"><use href="../ui/lucide.svg#i-banknote"/></svg>Largest fines</button>
-    <button class="chip" type="button" aria-pressed="false" data-browse="abuse"><svg class="icon" aria-hidden="true"><use href="../ui/lucide.svg#i-shield-alert"/></svg>Abuse-flagged</button>
-    <button class="chip" type="button" aria-pressed="false" data-browse="defs"><svg class="icon" aria-hidden="true"><use href="../ui/lucide.svg#i-clipboard-list"/></svg>Most deficiencies</button>
+  <p class="hint" id="hint">Or browse the worst-rated lists below — pick a metric, filter by state</p>
+  <div class="controls">
+    <div class="seg" role="group" aria-label="Choose a list">
+      <button class="seg-btn" type="button" aria-pressed="false" data-browse="fines"><svg class="icon" aria-hidden="true"><use href="../ui/lucide.svg#i-banknote"/></svg>Largest fines</button>
+      <button class="seg-btn" type="button" aria-pressed="false" data-browse="abuse"><svg class="icon" aria-hidden="true"><use href="../ui/lucide.svg#i-shield-alert"/></svg>Abuse-flagged</button>
+      <button class="seg-btn" type="button" aria-pressed="false" data-browse="defs"><svg class="icon" aria-hidden="true"><use href="../ui/lucide.svg#i-clipboard-list"/></svg>Most deficiencies</button>
+    </div>
+    <div class="state-filter">
+      <svg class="icon" aria-hidden="true"><use href="../ui/lucide.svg#i-map-pin"/></svg>
+      <select id="bst" aria-label="Filter by state">
+        <option value="">All states</option>
+      </select>
+    </div>
   </div>
   <div class="results" id="results" aria-live="polite"></div>
 </header>
@@ -234,7 +263,7 @@
   var toast = document.getElementById('toast');
   var GRADES = { 5: ['A', '#2e7d4f'], 4: ['B', '#5f7d1f'], 3: ['C', '#9a6a00'], 2: ['D', '#b54708'], 1: ['F', '#b3261e'], 0: ['NR', '#9a6a00'] };
   var NAT_DEF_AVG = 9.3;
-  var DEFAULT_HINT = 'Search by name or hometown — or browse a list below, for any state';
+  var DEFAULT_HINT = 'Or browse the worst-rated lists below — pick a metric, filter by state';
   var ICON = function (name) { return '<svg class="icon icon-md" aria-hidden="true"><use href="../ui/lucide.svg#i-' + name + '"/></svg>'; };
 
   // ---- live backend (Supabase Postgres; anon key is public by design, RLS-protected) ----
@@ -350,22 +379,30 @@
     return scored.slice(0, 8).map(function (s) { return s[1]; });
   }
 
+  var CHEV = '<svg class="icon chev" aria-hidden="true"><use href="../ui/lucide.svg#i-chevron-down" transform="rotate(-90 12 12)"/></svg>';
+
+  function rowButton(inner, onClick) {
+    var b = document.createElement('button');
+    b.className = 'row-item'; b.type = 'button';
+    b.innerHTML = inner;
+    b.addEventListener('click', onClick);
+    return b;
+  }
+
   function showResults(list, term) {
     resultsEl.innerHTML = '';
     if (term && term.trim().length >= 3 && list.length === 0 && DATA) {
-      var d = document.createElement('div');
-      d.className = 'empty';
-      d.innerHTML = 'No facilities match “' + esc(term.trim()) + '” — try the city name alone, check spelling, or browse your state’s lists above.';
-      resultsEl.appendChild(d);
+      resultsEl.innerHTML = '<div class="empty">No facilities match “' + esc(term.trim()) + '” — try the city name alone, check spelling, or browse a list below.</div>';
       return;
     }
+    if (!list.length) return;
+    var panel = document.createElement('div'); panel.className = 'panel';
     list.forEach(function (f) {
-      var b = document.createElement('button');
-      b.className = 'res'; b.type = 'button';
-      b.innerHTML = '<span>' + esc(f.name) + '</span><span class="loc">' + esc(f.city) + ', ' + f.st + '</span>';
-      b.addEventListener('click', function () { showCard(f); });
-      resultsEl.appendChild(b);
+      panel.appendChild(rowButton(
+        '<div class="body"><div class="name">' + esc(f.name) + '</div><div class="loc">' + esc(f.city) + ', ' + f.st + '</div></div>' + CHEV,
+        function () { showCard(f); }));
     });
+    resultsEl.appendChild(panel);
   }
 
   function showCard(f) {
@@ -465,13 +502,13 @@
     var o = document.createElement('option'); o.value = s; o.textContent = s; bst.appendChild(o);
   });
   var BROWSE = {
-    fines: { label: 'Largest federal fine totals', sort: function (a, b) { return b.fines - a.fines; }, badge: function (f) { return fmtMoney(f.fines); } },
-    abuse: { label: 'Facilities carrying the federal abuse flag', filter: function (f) { return f.abuse === 1; }, sort: function (a, b) { return a.rating - b.rating || b.fines - a.fines; }, badge: function () { return 'abuse flag'; } },
-    defs:  { label: 'Most health deficiencies, latest inspection', sort: function (a, b) { return b.defs - a.defs; }, badge: function (f) { return f.defs + ' deficiencies'; } }
+    fines: { label: 'Largest federal fine totals', short: 'fined', sort: function (a, b) { return b.fines - a.fines; }, badge: function (f) { return fmtMoney(f.fines); } },
+    abuse: { label: 'Carrying the federal abuse flag', short: 'abuse-flagged', filter: function (f) { return f.abuse === 1; }, sort: function (a, b) { return a.rating - b.rating || b.fines - a.fines; }, badge: function () { return 'abuse flag'; } },
+    defs:  { label: 'Most health deficiencies', short: 'cited', sort: function (a, b) { return b.defs - a.defs; }, badge: function (f) { return f.defs + ' def.'; } }
   };
   var activeBrowse = null;
   function setChips(kind) {
-    document.querySelectorAll('.chip').forEach(function (ch) {
+    document.querySelectorAll('.seg-btn').forEach(function (ch) {
       ch.setAttribute('aria-pressed', String(ch.dataset.browse === kind));
     });
   }
@@ -486,23 +523,30 @@
     pool.sort(cfg.sort);
     var top = pool.slice(0, 12);
     resultsEl.innerHTML = '';
-    var head = document.createElement('p'); head.className = 'list-head';
-    head.textContent = cfg.label + (st ? ' — ' + st : ' — United States') + ' (top ' + top.length + ' of ' + pool.length.toLocaleString() + ')';
-    resultsEl.appendChild(head);
-    top.forEach(function (f) {
-      var b = document.createElement('button');
-      b.className = 'res'; b.type = 'button';
-      b.innerHTML = '<span>' + esc(f.name) + ' <span class="loc">' + esc(f.city) + ', ' + f.st + '</span></span><span class="badge warn">' + cfg.badge(f) + '</span>';
-      b.addEventListener('click', function () { showCard(f); });
-      resultsEl.appendChild(b);
+    if (!top.length) {
+      resultsEl.innerHTML = '<div class="empty">No ' + esc(cfg.short) + ' facilities found in ' + (st || 'the US') + '. Try another state.</div>';
+      setChips(kind); var uu = new URL(location.href); uu.searchParams.set('browse', kind); st ? uu.searchParams.set('st', st) : uu.searchParams.delete('st'); uu.searchParams.delete('q'); history.replaceState(null, '', uu.toString());
+      return;
+    }
+    var panel = document.createElement('div'); panel.className = 'panel';
+    var head = document.createElement('div'); head.className = 'panel-head';
+    head.innerHTML = '<span class="pt">' + esc(cfg.label) + (st ? ' · ' + st : '') + '</span><span class="pc">top ' + top.length + ' of ' + pool.length.toLocaleString() + '</span>';
+    panel.appendChild(head);
+    top.forEach(function (f, idx) {
+      panel.appendChild(rowButton(
+        '<span class="rank">' + (idx + 1) + '</span>' +
+        '<div class="body"><div class="name">' + esc(f.name) + '</div><div class="loc">' + esc(f.city) + ', ' + f.st + '</div></div>' +
+        '<span class="metric">' + cfg.badge(f) + '</span>',
+        function () { showCard(f); }));
     });
+    resultsEl.appendChild(panel);
     var u = new URL(location.href);
     u.searchParams.set('browse', kind); st ? u.searchParams.set('st', st) : u.searchParams.delete('st');
     u.searchParams.delete('q');
     history.replaceState(null, '', u.toString());
     setChips(kind);
   }
-  document.querySelectorAll('.chip').forEach(function (ch) {
+  document.querySelectorAll('.seg-btn').forEach(function (ch) {
     ch.addEventListener('click', function () {
       if (activeBrowse === ch.dataset.browse) { clearBrowse(); return; }  /* second tap clears */
       activeBrowse = ch.dataset.browse;
