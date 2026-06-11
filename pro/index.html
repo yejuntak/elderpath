@@ -87,6 +87,9 @@
           <input id="otp" type="text" class="input" inputmode="numeric" placeholder="6-digit code from the email" aria-label="Sign-in code">
           <button class="btn btn-outline" id="verify-otp" type="button"><svg class="icon icon-md"><use href="../ui/lucide.svg#i-arrow-right"/></svg>Sign in with code</button>
         </div>
+        <hr class="separator">
+        <button class="btn btn-secondary" id="instant" type="button"><svg class="icon icon-md"><use href="../ui/lucide.svg#i-arrow-right"/></svg>Continue instantly — no email needed</button>
+        <p class="note" style="margin-top:8px">Starts a guest session on this device. You can attach your email and license any time.</p>
         <div class="msgslot" id="auth-msg" aria-live="polite"></div>
       </div>
     </div>
@@ -181,7 +184,7 @@
     db.auth.getSession().then(function (res) {
       var session = res.data.session;
       if (!session) { show('auth'); return; }
-      el('who').textContent = session.user.email;
+      el('who').textContent = session.user.email || 'guest session';
       el('who').classList.remove('hidden');
       el('signout').classList.remove('hidden');
       db.rpc('is_pro').then(function (r) {
@@ -213,6 +216,14 @@
       el('step-code').classList.remove('hidden');
       setMsg('auth-msg', 'ok', 'Check ' + esc(email) + ' — click the sign-in link, or enter the 6-digit code below. (Check spam too.)');
       el('otp').focus();
+    });
+  });
+  el('instant').addEventListener('click', function () {
+    var btn = this; btn.disabled = true;
+    db.auth.signInAnonymously().then(function (r) {
+      btn.disabled = false;
+      if (r.error) { setMsg('auth-msg', 'err', friendlyAuthError(r.error.message)); return; }
+      route();
     });
   });
   el('verify-otp').addEventListener('click', function () {
