@@ -237,11 +237,11 @@
   .rc-head .rc-name { font-family: 'Fraunces', Georgia, serif; font-weight: 600; line-height: 1.1; letter-spacing: -.015em; font-size: 20px; }
   .rc-head .loc { font-size: 13.5px; color: var(--body); margin-top: 2px; }
   .grade {
-    flex-shrink: 0; text-align: center; background: var(--green-bg); border: 1.5px solid #c4dccd;
-    border-radius: var(--r-s); padding: 8px 14px;
+    flex-shrink: 0; text-align: center; background: #2e7d4f; border: none;
+    border-radius: var(--r-s); padding: 9px 15px;
   }
-  .grade .g { font-family: 'Fraunces', serif; font-size: 26px; font-weight: 700; color: var(--green); line-height: 1; }
-  .grade .gl { font-size: 11px; font-weight: 700; letter-spacing: .08em; color: var(--green); text-transform: uppercase; }
+  .grade .g { font-family: 'Fraunces', serif; font-size: 26px; font-weight: 700; color: #fff; line-height: 1; }
+  .grade .gl { font-size: 11px; font-weight: 700; letter-spacing: .08em; color: #fff; text-transform: uppercase; }
   .rc-row { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding: 8px 0; font-size: 15px; border-bottom: 1px dashed var(--line); }
   .rc-row:has(+ .rc-violations) { border-bottom: none; }
   .rc-row .label { color: var(--body); }
@@ -335,11 +335,12 @@
   .method .lead { color: var(--body); max-width: 640px; margin: 16px 0 12px; }
   .grade-legend { display: flex; gap: 8px; max-width: 420px; margin: 26px 0 8px; }
   .gl-chip { flex: 1; text-align: center; border-radius: var(--r-s); padding: 9px 0; font-family: 'Fraunces', serif; font-weight: 700; font-size: 17px; }
-  .gl-a { background: #e7f0ea; color: #2f6b52; }
-  .gl-b { background: #edf2e2; color: #5a6b27; }
-  .gl-c { background: #f7f0da; color: #87651a; }
-  .gl-d { background: #f9e9da; color: #9c5520; }
-  .gl-f { background: #f9e3dd; color: #a13a2e; }
+  /* vivid solid grade scale — all white-text pairs ≥4.5:1, distinct from cream bgs */
+  .gl-a { background: #2e7d4f; color: #fff; }
+  .gl-b { background: #5f7d1f; color: #fff; }
+  .gl-c { background: #9a6a00; color: #fff; }
+  .gl-d { background: #b54708; color: #fff; }
+  .gl-f { background: #b3261e; color: #fff; }
   .gl-cap { font-size: 12.5px; color: var(--muted); margin-bottom: 8px; }
   .method-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; margin-top: 44px; border-top: 1px solid var(--line); }
   .m-col { padding: 28px 26px 8px; border-left: 1px solid var(--line); }
