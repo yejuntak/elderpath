@@ -25,15 +25,16 @@
   "description": "Free lookup of the federal safety record — star rating, abuse flags, fines, and inspection deficiencies — for any of the 14,700 Medicare-certified US nursing homes, based on the CMS Provider Information dataset (May 2026)."
 }
 </script>
+<link rel="stylesheet" href="../ui/elderpath-ui.css">
 <style>
+  /* page aliases over the ElderPath UI library tokens (ui/elderpath-ui.css) */
   :root {
-    --ink: #2b251d; --body: #57503f; --muted: #6e6553;
-    --cream: #f7f3ec; --cream-2: #efe8db; --card: #fffdf9;
-    --sienna: #9d4f24; --sienna-dark: #7c3c17;
-    --green: #2f6b52; --line: #e3dac8;
-    --brown: #2b2118; --on-brown-muted: #b5a98f;
-    --g-a: #2e7d4f; --g-b: #5f7d1f; --g-c: #9a6a00; --g-d: #b54708; --g-f: #b3261e;
-    --red: #b3261e; --red-bg: #f9eae5;
+    --ink: var(--foreground); --body: var(--body-foreground); --muted: var(--muted-foreground);
+    --cream: var(--background); --cream-2: var(--secondary); --card-bg: var(--card);
+    --sienna: var(--primary); --sienna-dark: var(--primary-hover);
+    --green: var(--success); --line: var(--border);
+    --brown: var(--inverse); --on-brown-muted: var(--inverse-muted);
+    --red: var(--destructive); --red-bg: var(--destructive-soft);
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; background: var(--cream); color: var(--ink); font-size: 17px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
@@ -45,19 +46,26 @@
   .nav-inner { display: flex; align-items: center; justify-content: space-between; height: 64px; }
   .logo { font-family: Georgia, serif; font-weight: 700; font-size: 20px; color: var(--ink); text-decoration: none; }
   .logo em { font-style: italic; color: var(--sienna); }
-  .btn { display: inline-block; background: var(--sienna); color: #fff; border: none; cursor: pointer; font-family: inherit; font-size: 15px; font-weight: 600; padding: 11px 22px; border-radius: 999px; text-decoration: none; }
-  .btn:hover { background: var(--sienna-dark); }
+  /* .btn comes from the UI library (flat, icon-ready) */
   header.h { padding: 56px 0 28px; text-align: center; }
   .kicker { display: block; font-size: 12.5px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: var(--sienna); margin-bottom: 14px; }
   h1 { font-size: clamp(30px, 5.4vw, 46px); margin-bottom: 14px; }
   .sub { color: var(--body); max-width: 56ch; margin: 0 auto; }
   .searchbox { position: relative; margin: 28px 0 8px; }
+  .searchbox > .icon {
+    position: absolute; left: 22px; top: 50%; transform: translateY(-50%);
+    width: 20px; height: 20px; color: var(--muted); pointer-events: none;
+  }
   .searchbox input {
-    width: 100%; padding: 17px 24px; font-size: 17px; font-family: inherit;
-    border: 2px solid var(--line); border-radius: 999px; background: #fff; color: var(--ink);
+    width: 100%; padding: 17px 24px 17px 54px; font-size: 17px; font-family: inherit;
+    border: 1.5px solid var(--line); border-radius: 999px; background: #fff; color: var(--ink);
   }
   .searchbox input:focus { border-color: var(--sienna); }
   .hint { font-size: 13px; color: var(--muted); text-align: center; }
+  .empty {
+    text-align: center; color: var(--body); font-size: 15px;
+    background: var(--card); border: 1.5px dashed var(--line); border-radius: 14px; padding: 18px 20px;
+  }
   .results { margin: 14px 0 0; display: grid; gap: 8px; }
   .res {
     text-align: left; background: var(--card); border: 1px solid var(--line); border-radius: 14px;
@@ -68,27 +76,44 @@
   .res .loc { color: var(--muted); font-size: 13.5px; white-space: nowrap; }
   .browse-row { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-top: 14px; }
   .browse-row select {
-    font-family: inherit; font-size: 13.5px; font-weight: 600; color: var(--ink);
-    background: var(--card); border: 1px solid var(--line); border-radius: 999px; padding: 8px 14px;
+    font-family: inherit; font-size: 13.5px; font-weight: 600; color: var(--ink); height: 44px;
+    background: var(--card); border: 1.5px solid var(--line); border-radius: 999px; padding: 0 14px;
   }
   .chip {
+    display: inline-flex; align-items: center; gap: 7px; height: 44px;
     font-family: inherit; font-size: 13.5px; font-weight: 600; color: var(--body); cursor: pointer;
-    background: var(--card); border: 1px solid var(--line); border-radius: 999px; padding: 8px 14px;
+    background: var(--card); border: 1.5px solid var(--line); border-radius: 999px; padding: 0 16px;
+    transition: border-color .15s, color .15s, background .15s;
   }
-  .chip:hover, .chip.on { border-color: var(--sienna); color: var(--sienna); }
+  .chip .icon { width: 17px; height: 17px; }
+  .chip:hover { border-color: var(--sienna); color: var(--sienna); }
+  .chip[aria-pressed="true"] { border-color: var(--sienna); color: var(--sienna); background: var(--accent); }
   .list-head { font-size: 14px; color: var(--muted); margin: 16px 0 6px; text-align: center; }
-  .res .badge { font-size: 13px; font-weight: 700; white-space: nowrap; }
-  .res .badge.warn { color: var(--red); }
+  .res .badge.warn {
+    font-size: 12.5px; font-weight: 700; white-space: nowrap; color: var(--red);
+    background: var(--red-bg); border: 1px solid var(--destructive-border);
+    border-radius: 999px; padding: 6px 11px;
+  }
   body.embed nav, body.embed .cta, body.embed section.about, body.embed footer, body.embed .embed-box { display: none; }
   body.embed header.h { padding: 22px 0 14px; }
   body.embed h1 { font-size: 26px; }
+  body.embed { padding-bottom: 50px; }
+  .embed-attrib {
+    display: none; position: fixed; left: 0; right: 0; bottom: 0; z-index: 55;
+    background: var(--brown); color: var(--on-brown-muted); font-size: 12.5px;
+    padding: 9px 16px; text-align: center;
+  }
+  .embed-attrib a { color: #fff; font-weight: 700; text-decoration: none; }
+  body.embed .embed-attrib { display: block; }
   .embed-box { margin: 30px 0 0; }
   .embed-box summary { cursor: pointer; font-size: 14px; font-weight: 600; color: var(--muted); }
   .embed-box pre {
     background: var(--card); border: 1px solid var(--line); border-radius: 12px;
     padding: 14px 16px; font-size: 12.5px; overflow-x: auto; margin-top: 10px; user-select: all;
   }
-  .card { background: var(--card); border: 1px solid var(--line); border-radius: 20px; box-shadow: 0 18px 50px rgba(43,37,29,.12); padding: 26px 28px; margin: 22px 0; }
+  /* flat: border carries elevation, no shadow */
+  .card { background: var(--card); border: 1.5px solid var(--line); border-radius: 20px; padding: 26px 28px; margin: 22px 0; }
+  .card:focus { outline: none; }
   .card-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; border-bottom: 1px solid var(--line); padding-bottom: 14px; margin-bottom: 8px; }
   .card-head h2 { font-size: 22px; }
   .card-head .loc { font-size: 14px; color: var(--body); margin-top: 2px; }
@@ -128,7 +153,7 @@
   @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .toast { transition: none; } }
 </style>
 </head>
-<body>
+<body class="ui">
 
 <nav aria-label="Main">
   <div class="wrap nav-inner">
@@ -145,16 +170,17 @@
   <h1>Look up any US nursing home's <span class="it">federal safety record.</span></h1>
   <p class="sub">All 14,700 Medicare-certified facilities, searchable: star rating, abuse flags, federal fines, and inspection deficiencies — straight from the May 2026 CMS data. No signup.</p>
   <div class="searchbox">
+    <svg class="icon" aria-hidden="true"><use href="../ui/lucide.svg#i-search"/></svg>
     <input id="q" type="search" placeholder="Facility name, city, or state — try your hometown" aria-label="Search nursing homes by name, city, or state" autocomplete="off">
   </div>
-  <p class="hint" id="hint">Type at least 3 characters · e.g. "Lindale TX", "Brookdale", "Missouri"</p>
+  <p class="hint" id="hint">Search by name or hometown — or browse a list below, for any state</p>
   <div class="browse-row" role="group" aria-label="Browse lists">
     <select id="bst" aria-label="State filter">
       <option value="">All states</option>
     </select>
-    <button class="chip" type="button" data-browse="fines">💸 Largest fines</button>
-    <button class="chip" type="button" data-browse="abuse">🚩 Abuse-flagged</button>
-    <button class="chip" type="button" data-browse="defs">📋 Most deficiencies</button>
+    <button class="chip" type="button" aria-pressed="false" data-browse="fines"><svg class="icon" aria-hidden="true"><use href="../ui/lucide.svg#i-banknote"/></svg>Largest fines</button>
+    <button class="chip" type="button" aria-pressed="false" data-browse="abuse"><svg class="icon" aria-hidden="true"><use href="../ui/lucide.svg#i-shield-alert"/></svg>Abuse-flagged</button>
+    <button class="chip" type="button" aria-pressed="false" data-browse="defs"><svg class="icon" aria-hidden="true"><use href="../ui/lucide.svg#i-clipboard-list"/></svg>Most deficiencies</button>
   </div>
   <div class="results" id="results" aria-live="polite"></div>
 </header>
@@ -192,6 +218,7 @@
   </div>
 </footer>
 
+<div class="embed-attrib">Data: CMS, May 2026 · Powered by <a href="https://yejuntak.github.io/elderpath/check/" target="_blank" rel="noopener">ElderPath Check ↗</a></div>
 <div class="toast" id="toast" role="status"></div>
 
 <script>
@@ -202,8 +229,10 @@
   var cardSlot = document.getElementById('card-slot');
   var hint = document.getElementById('hint');
   var toast = document.getElementById('toast');
-  var GRADES = { 5: ['A', '#2e7d4f'], 4: ['B', '#5f7d1f'], 3: ['C', '#9a6a00'], 2: ['D', '#b54708'], 1: ['F', '#b3261e'], 0: ['–', '#6e6553'] };
+  var GRADES = { 5: ['A', '#2e7d4f'], 4: ['B', '#5f7d1f'], 3: ['C', '#9a6a00'], 2: ['D', '#b54708'], 1: ['F', '#b3261e'], 0: ['NR', '#9a6a00'] };
   var NAT_DEF_AVG = 9.3;
+  var DEFAULT_HINT = 'Search by name or hometown — or browse a list below, for any state';
+  var ICON = function (name) { return '<svg class="icon icon-md" aria-hidden="true"><use href="../ui/lucide.svg#i-' + name + '"/></svg>'; };
 
   // ---- live backend (Supabase Postgres; anon key is public by design, RLS-protected) ----
   var API = 'https://mrwgqbjldhywdocmyuop.supabase.co';
@@ -285,8 +314,8 @@
     if (DATA || loading) return loading;
     hint.textContent = 'Loading 14,700 facilities…';
     loading = fetch('data.json').then(function (r) { return r.json(); }).then(function (j) {
-      DATA = j.map(function (f, i) { return { i: i, name: f[0], city: f[1], st: f[2], rating: f[3], abuse: f[4], fines: f[5], finesN: f[6], defs: f[7], sff: f[8], staff: f[9], hay: (f[0] + ' ' + f[1] + ' ' + f[2]).toLowerCase() }; });
-      hint.textContent = 'Type at least 3 characters · e.g. "Lindale TX", "Brookdale", "Missouri"';
+      DATA = j.map(function (f, i) { return { i: i, name: f[0], city: f[1], st: f[2], rating: f[3], abuse: f[4], fines: f[5], finesN: f[6], defs: f[7], sff: f[8], staff: f[9], ccn: f[10] || '', hay: (f[0] + ' ' + f[1] + ' ' + f[2]).toLowerCase() }; });
+      hint.textContent = DEFAULT_HINT;
       return DATA;
     });
     return loading;
@@ -317,12 +346,19 @@
     return scored.slice(0, 8).map(function (s) { return s[1]; });
   }
 
-  function showResults(list) {
+  function showResults(list, term) {
     resultsEl.innerHTML = '';
+    if (term && term.trim().length >= 3 && list.length === 0 && DATA) {
+      var d = document.createElement('div');
+      d.className = 'empty';
+      d.innerHTML = 'No facilities match “' + esc(term.trim()) + '” — try the city name alone, check spelling, or browse your state’s lists above.';
+      resultsEl.appendChild(d);
+      return;
+    }
     list.forEach(function (f) {
       var b = document.createElement('button');
       b.className = 'res'; b.type = 'button';
-      b.innerHTML = '<span>' + f.name + '</span><span class="loc">' + f.city + ', ' + f.st + '</span>';
+      b.innerHTML = '<span>' + esc(f.name) + '</span><span class="loc">' + esc(f.city) + ', ' + f.st + '</span>';
       b.addEventListener('click', function () { showCard(f); });
       resultsEl.appendChild(b);
     });
@@ -334,18 +370,21 @@
       ? '<div class="row"><span class="l">Health deficiencies, latest inspection cycle</span><span class="v ' + (f.defs > NAT_DEF_AVG ? 'warn' : 'ok') + '">' + f.defs + ' <small>(US avg ' + NAT_DEF_AVG + ')</small></span></div>' : '';
     var staffLine = f.staff > 0
       ? '<div class="row"><span class="l">Nurse staffing hours per resident per day</span><span class="v">' + f.staff.toFixed(2) + '</span></div>' : '';
+    var mcUrl = f.ccn
+      ? 'https://www.medicare.gov/care-compare/details/nursing-home/' + encodeURIComponent(f.ccn) + '?state=' + f.st
+      : 'https://www.medicare.gov/care-compare/?providerType=NursingHome&redirect=true';
     cardSlot.innerHTML =
-      '<div class="card" id="rc">' +
-      '<div class="card-head"><div><h2>' + f.name + '</h2><div class="loc">' + f.city + ', ' + f.st + ' · Medicare-certified nursing facility</div></div>' +
-      '<div class="grade" style="background:' + g[1] + '"><div class="g">' + g[0] + '</div><div class="gl">CMS ' + (f.rating ? f.rating + '/5' : 'not rated') + '</div></div></div>' +
-      (f.abuse ? '<div class="flag">⚠ Carries the CMS abuse flag — cited for abuse that harmed or could harm residents.</div>' : '') +
-      (f.sff ? '<div class="flag">⚠ In the federal Special Focus program for persistently poor care.</div>' : '') +
+      '<div class="card" id="rc" tabindex="-1" role="group" aria-label="Facility safety record">' +
+      '<div class="card-head"><div><h2>' + esc(f.name) + '</h2><div class="loc">' + esc(f.city) + ', ' + f.st + ' · Medicare-certified nursing facility</div></div>' +
+      '<div class="grade" style="background:' + g[1] + '"><div class="g">' + (g[0] === 'NR' ? '—' : g[0]) + '</div><div class="gl">' + (f.rating ? 'CMS ' + f.rating + '/5' : 'Not yet rated') + '</div></div></div>' +
+      (f.abuse ? '<div class="flag">' + ICON('shield-alert') + ' Carries the CMS abuse flag — cited for abuse that harmed or could harm residents.</div>' : '') +
+      (f.sff ? '<div class="flag">' + ICON('triangle-alert') + ' In the federal Special Focus program for persistently poor care.</div>' : '') +
       '<div class="row"><span class="l">Federal fines on current record</span><span class="v ' + (f.fines > 0 ? 'warn' : 'ok') + '">' + (f.fines > 0 ? fmtMoney(f.fines) + ' across ' + f.finesN + ' fine' + (f.finesN === 1 ? '' : 's') : 'None') + '</span></div>' +
       defsLine + staffLine +
       '<p class="src">Source: CMS Provider Information dataset, May 2026 release. Verify current status at Medicare Care Compare.</p>' +
-      '<div class="share-row"><button class="btn" id="share">Share this record</button>' +
-      '<button class="btn ghost" id="dlimg">Download card image</button>' +
-      '<a class="btn ghost" href="https://www.medicare.gov/care-compare/?providerType=NursingHome&redirect=true" target="_blank" rel="noopener">Verify on Medicare.gov</a></div>' +
+      '<div class="share-row"><button class="btn" id="share">' + ICON('share-2') + 'Share this record</button>' +
+      '<button class="btn ghost" id="dlimg">' + ICON('download') + 'Download card image</button>' +
+      '<a class="btn ghost" href="' + mcUrl + '" target="_blank" rel="noopener">' + ICON('external-link') + 'Verify on Medicare.gov</a></div>' +
       '</div>';
     document.getElementById('dlimg').addEventListener('click', function () { downloadCard(f); });
     var url = location.origin + location.pathname + '?q=' + encodeURIComponent(f.name + ' ' + f.st);
@@ -359,7 +398,9 @@
         });
       }
     });
-    cardSlot.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    var rc = document.getElementById('rc');
+    rc.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    rc.focus({ preventScroll: true });
     enrichCard(f);
   }
 
@@ -370,33 +411,38 @@
     var x = c.getContext('2d');
     x.fillStyle = '#f7f3ec'; x.fillRect(0, 0, 1200, 630);
     x.fillStyle = '#fffdf9'; roundRect(x, 50, 50, 1100, 530, 28); x.fill();
-    x.strokeStyle = '#e3dac8'; x.lineWidth = 2; roundRect(x, 50, 50, 1100, 530, 28); x.stroke();
+    x.strokeStyle = '#e3dac8'; x.lineWidth = 3; roundRect(x, 50, 50, 1100, 530, 28); x.stroke();
     x.fillStyle = '#9d4f24'; x.font = '700 26px Georgia, serif';
     x.fillText('ElderPath Check', 100, 122);
     x.fillStyle = g[1]; roundRect(x, 950, 86, 160, 120, 20); x.fill();
     x.fillStyle = '#fff'; x.textAlign = 'center';
-    x.font = '700 64px Georgia, serif'; x.fillText(g[0], 1030, 158);
-    x.font = '700 17px Inter, sans-serif'; x.fillText('CMS ' + (f.rating ? f.rating + '/5' : 'N/R'), 1030, 188);
+    if (g[0] === 'NR') {
+      x.font = '700 34px Georgia, serif'; x.fillText('NEW', 1030, 142);
+      x.font = '700 16px Inter, sans-serif'; x.fillText('NOT RATED', 1030, 182);
+    } else {
+      x.font = '700 64px Georgia, serif'; x.fillText(g[0], 1030, 158);
+      x.font = '700 17px Inter, sans-serif'; x.fillText('CMS ' + f.rating + '/5', 1030, 188);
+    }
     x.textAlign = 'left'; x.fillStyle = '#2b251d';
     x.font = '700 44px Georgia, serif';
     var name = f.name.length > 38 ? f.name.slice(0, 37) + '…' : f.name;
     x.fillText(name, 100, 200);
     x.fillStyle = '#57503f'; x.font = '400 26px Inter, sans-serif';
     x.fillText(f.city + ', ' + f.st + ' · Medicare-certified nursing facility', 100, 244);
-    var y = 320;
-    function line(label, val, warn) {
+    var y = 312;
+    function line(label, val, color) {
       x.fillStyle = '#57503f'; x.font = '400 26px Inter, sans-serif'; x.fillText(label, 100, y);
-      x.fillStyle = warn ? '#b3261e' : '#2f6b52'; x.font = '700 26px Inter, sans-serif';
-      x.textAlign = 'right'; x.fillText(val, 1100, y); x.textAlign = 'left'; y += 56;
+      x.fillStyle = color; x.font = '700 26px Inter, sans-serif';
+      x.textAlign = 'right'; x.fillText(val, 1100, y); x.textAlign = 'left'; y += 54;
     }
-    if (f.abuse) { x.fillStyle = '#b3261e'; x.font = '700 28px Inter, sans-serif'; x.fillText('⚠ Carries the federal abuse flag', 100, y); y += 56; }
-    line('Federal fines on current record', f.fines > 0 ? fmtMoney(f.fines) + ' · ' + f.finesN + ' fine' + (f.finesN === 1 ? '' : 's') : 'None', f.fines > 0);
-    if (f.defs >= 0) line('Health deficiencies (US avg ' + NAT_DEF_AVG + ')', String(f.defs), f.defs > NAT_DEF_AVG);
-    if (f.staff > 0) line('Nurse staffing hrs / resident / day', f.staff.toFixed(2), false);
-    x.fillStyle = '#6e6553'; x.font = '400 22px Inter, sans-serif';
-    x.fillText('Source: CMS, May 2026 · Check any US nursing home free:', 100, 520);
-    x.fillStyle = '#9d4f24'; x.font = '700 24px Inter, sans-serif';
-    x.fillText('yejuntak.github.io/elderpath/check', 100, 552);
+    if (f.abuse) { x.fillStyle = '#b3261e'; x.font = '700 28px Inter, sans-serif'; x.fillText('⚠ Carries the federal abuse flag', 100, y); y += 54; }
+    line('Federal fines on current record', f.fines > 0 ? fmtMoney(f.fines) + ' · ' + f.finesN + ' fine' + (f.finesN === 1 ? '' : 's') : 'None', f.fines > 0 ? '#b3261e' : '#2f6b52');
+    if (f.defs >= 0) line('Health deficiencies (US avg ' + NAT_DEF_AVG + ')', String(f.defs), f.defs > NAT_DEF_AVG ? '#b3261e' : '#2f6b52');
+    if (f.staff > 0) line('Nurse staffing hrs / resident / day', f.staff.toFixed(2), '#2b251d');
+    x.fillStyle = '#6e6553'; x.font = '400 21px Inter, sans-serif';
+    x.fillText('Source: CMS, May 2026 · Check any US nursing home free:', 100, 524);
+    x.fillStyle = '#9d4f24'; x.font = '700 23px Inter, sans-serif';
+    x.fillText('yejuntak.github.io/elderpath/check', 100, 554);
     var a = document.createElement('a');
     a.download = 'elderpath-check-' + f.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').slice(0, 40) + '.png';
     a.href = c.toDataURL('image/png');
@@ -416,10 +462,20 @@
   });
   var BROWSE = {
     fines: { label: 'Largest federal fine totals', sort: function (a, b) { return b.fines - a.fines; }, badge: function (f) { return fmtMoney(f.fines); } },
-    abuse: { label: 'Facilities carrying the federal abuse flag', filter: function (f) { return f.abuse === 1; }, sort: function (a, b) { return a.rating - b.rating || b.fines - a.fines; }, badge: function () { return '🚩 abuse flag'; } },
+    abuse: { label: 'Facilities carrying the federal abuse flag', filter: function (f) { return f.abuse === 1; }, sort: function (a, b) { return a.rating - b.rating || b.fines - a.fines; }, badge: function () { return 'abuse flag'; } },
     defs:  { label: 'Most health deficiencies, latest inspection', sort: function (a, b) { return b.defs - a.defs; }, badge: function (f) { return f.defs + ' deficiencies'; } }
   };
   var activeBrowse = null;
+  function setChips(kind) {
+    document.querySelectorAll('.chip').forEach(function (ch) {
+      ch.setAttribute('aria-pressed', String(ch.dataset.browse === kind));
+    });
+  }
+  function clearBrowse() {
+    activeBrowse = null; setChips(null); resultsEl.innerHTML = '';
+    var u = new URL(location.href); u.searchParams.delete('browse'); u.searchParams.delete('st');
+    history.replaceState(null, '', u.toString());
+  }
   function runBrowse(kind, st) {
     var cfg = BROWSE[kind]; if (!cfg || !DATA) return;
     var pool = DATA.filter(function (f) { return (!st || f.st === st) && (!cfg.filter || cfg.filter(f)); });
@@ -432,7 +488,7 @@
     top.forEach(function (f) {
       var b = document.createElement('button');
       b.className = 'res'; b.type = 'button';
-      b.innerHTML = '<span>' + f.name + ' <span class="loc">' + f.city + ', ' + f.st + '</span></span><span class="badge warn">' + cfg.badge(f) + '</span>';
+      b.innerHTML = '<span>' + esc(f.name) + ' <span class="loc">' + esc(f.city) + ', ' + f.st + '</span></span><span class="badge warn">' + cfg.badge(f) + '</span>';
       b.addEventListener('click', function () { showCard(f); });
       resultsEl.appendChild(b);
     });
@@ -440,26 +496,28 @@
     u.searchParams.set('browse', kind); st ? u.searchParams.set('st', st) : u.searchParams.delete('st');
     u.searchParams.delete('q');
     history.replaceState(null, '', u.toString());
-    document.querySelectorAll('.chip').forEach(function (ch) { ch.classList.toggle('on', ch.dataset.browse === kind); });
+    setChips(kind);
   }
   document.querySelectorAll('.chip').forEach(function (ch) {
     ch.addEventListener('click', function () {
+      if (activeBrowse === ch.dataset.browse) { clearBrowse(); return; }  /* second tap clears */
       activeBrowse = ch.dataset.browse;
       load().then(function () { runBrowse(activeBrowse, bst.value); });
     });
   });
   bst.addEventListener('change', function () {
-    if (activeBrowse) load().then(function () { runBrowse(activeBrowse, bst.value); });
+    /* picking a state with no active list auto-runs the first list (was a silent no-op) */
+    if (!activeBrowse) activeBrowse = 'fines';
+    load().then(function () { runBrowse(activeBrowse, bst.value); });
   });
 
   var debounce;
   q.addEventListener('input', function () {
     clearTimeout(debounce);
     var v = q.value;
-    activeBrowse = null;
-    document.querySelectorAll('.chip').forEach(function (ch) { ch.classList.remove('on'); });
+    if (activeBrowse) { activeBrowse = null; setChips(null); }
     debounce = setTimeout(function () {
-      load().then(function () { showResults(search(v)); });
+      load().then(function () { showResults(search(v), v); });
     }, 120);
   });
   q.addEventListener('focus', load);
@@ -470,7 +528,7 @@
     q.value = params.get('q');
     load().then(function () {
       var hits = search(q.value);
-      showResults(hits);
+      showResults(hits, q.value);
       if (hits.length) showCard(hits[0]);
     });
   } else if (params.get('browse') && BROWSE[params.get('browse')]) {

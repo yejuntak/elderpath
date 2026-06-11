@@ -103,8 +103,9 @@
     --on-brown-muted: #b5a98f;
     --r-card: 24px;
     --r-s: 14px;
-    --shadow: 0 6px 28px rgba(43, 37, 29, .08);
-    --shadow-lg: 0 28px 70px rgba(43, 37, 29, .18);
+    /* flat design language: zero depth — borders carry elevation (matches ui/elderpath-ui.css) */
+    --shadow: none;
+    --shadow-lg: none;
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
   html { scroll-behavior: smooth; }
@@ -277,7 +278,7 @@
   .bento-head h2 { font-size: clamp(30px, 4vw, 44px); }
   .bento-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
   .bento-grid .row2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(265px, 1fr)); gap: 20px; grid-column: 1 / -1; }
-  .b-card { border-radius: var(--r-card); overflow: hidden; position: relative; box-shadow: var(--shadow); }
+  .b-card { border-radius: var(--r-card); overflow: hidden; position: relative; border: 1.5px solid var(--line); }
   .b-photo { min-height: clamp(280px, 42vw, 380px); display: flex; align-items: flex-end; }
   .b-photo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
   .b-photo .scrim {
@@ -375,7 +376,7 @@
   /* ---------- voices ---------- */
   .voices h2 { font-size: clamp(30px, 4vw, 44px); max-width: 700px; }
   .voices-flex { display: grid; grid-template-columns: .92fr 1.08fr; gap: 20px; margin-top: 44px; align-items: stretch; }
-  .voices-photo { border-radius: var(--r-card); overflow: hidden; box-shadow: var(--shadow); }
+  .voices-photo { border-radius: var(--r-card); overflow: hidden; border: 1.5px solid var(--line); }
   .voices-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
   .voices-stack { display: grid; gap: 20px; align-content: center; }
   .voice { background: var(--card); border: 1px solid var(--line); border-radius: var(--r-card); padding: 28px 30px; box-shadow: var(--shadow); }
@@ -783,7 +784,7 @@
     <p class="lead">You shouldn't have to guess who a "free" service really works for. Here's the whole model:</p>
     <div class="money-grid">
       <div class="money-card yes reveal">
-        <h3><span class="ic ic-yes">✓</span>What we do</h3>
+        <h3><span class="ic ic-yes"><svg class="icon" width="16" height="16" aria-hidden="true"><use href="ui/lucide.svg#i-check"/></svg></span>What we do</h3>
         <ul>
           <li>Communities pay a <strong>flat placement fee</strong> when a family moves in — same fee for every community, never a percentage of rent</li>
           <li>Families can choose a <strong>$299 independent-advisor tier</strong>: we refund any facility fee and work only for you</li>
@@ -791,7 +792,7 @@
         </ul>
       </div>
       <div class="money-card no reveal">
-        <h3><span class="ic ic-no">✕</span>What we never do</h3>
+        <h3><span class="ic ic-no"><svg class="icon" width="16" height="16" aria-hidden="true"><use href="ui/lucide.svg#i-x"/></svg></span>What we never do</h3>
         <ul>
           <li>Sell or share your contact information with facilities, marketers, or anyone else</li>
           <li>Let a community pay for a better grade, a higher ranking, or a spot on your shortlist</li>

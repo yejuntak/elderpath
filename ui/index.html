@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ElderPath UI — component library</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%239d4f24'/%3E%3Ctext x='32' y='44' font-family='Georgia,serif' font-size='36' font-weight='bold' fill='%23fff' text-anchor='middle'%3EE%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="elderpath-ui.css">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Inter', -apple-system, sans-serif; background: var(--background); color: var(--foreground); font-size: 16px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+  h1, h2 { font-family: Georgia, serif; font-weight: 600; }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 0 24px 80px; }
+  header { padding: 48px 0 8px; }
+  h1 { font-size: 34px; }
+  .lede { color: var(--body-foreground); margin-top: 8px; max-width: 60ch; }
+  section { padding: 26px 0 6px; }
+  h2 { font-size: 21px; border-bottom: 1.5px solid var(--border); padding-bottom: 8px; margin-bottom: 16px; }
+  .row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-bottom: 12px; }
+  .swatches { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 10px; }
+  .sw { border: 1.5px solid var(--border); border-radius: var(--radius); overflow: hidden; font-size: 11.5px; }
+  .sw > div { height: 44px; }
+  .sw span { display: block; padding: 6px 9px; color: var(--muted-foreground); }
+  .icon-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 8px; }
+  .ig { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 12px 6px; border: 1.5px solid var(--border); border-radius: var(--radius); font-size: 11px; color: var(--muted-foreground); }
+  .ig svg { width: 22px; height: 22px; color: var(--foreground); }
+  code.use { display: block; background: var(--card); border: 1.5px solid var(--border); border-radius: var(--radius); padding: 10px 14px; font-size: 12.5px; color: var(--body-foreground); margin: 8px 0 16px; overflow-x: auto; white-space: pre; }
+  .demo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  @media (max-width: 700px) { .demo-grid { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body class="ui">
+<div class="wrap">
+
+<header>
+  <h1>ElderPath <em style="font-style:italic;color:var(--primary)">UI</em></h1>
+  <p class="lede">The shared component library behind elderpath pages — shadcn/ui's token system and component anatomy, implemented framework-free. <strong>Flat by rule: no shadows anywhere; borders carry all elevation.</strong> Icons are official Lucide via <code>ui/lucide.svg</code>.</p>
+</header>
+
+<section>
+  <h2>Tokens</h2>
+  <div class="swatches">
+    <div class="sw"><div style="background:var(--primary)"></div><span>--primary</span></div>
+    <div class="sw"><div style="background:var(--background)"></div><span>--background</span></div>
+    <div class="sw"><div style="background:var(--card)"></div><span>--card</span></div>
+    <div class="sw"><div style="background:var(--secondary)"></div><span>--secondary</span></div>
+    <div class="sw"><div style="background:var(--foreground)"></div><span>--foreground</span></div>
+    <div class="sw"><div style="background:var(--muted-foreground)"></div><span>--muted-foreground</span></div>
+    <div class="sw"><div style="background:var(--destructive)"></div><span>--destructive</span></div>
+    <div class="sw"><div style="background:var(--success)"></div><span>--success</span></div>
+    <div class="sw"><div style="background:var(--border)"></div><span>--border</span></div>
+    <div class="sw"><div style="background:var(--inverse)"></div><span>--inverse</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Button</h2>
+  <div class="row">
+    <button class="btn"><svg class="icon icon-md"><use href="lucide.svg#i-check"/></svg>Default</button>
+    <button class="btn btn-outline"><svg class="icon icon-md"><use href="lucide.svg#i-download"/></svg>Outline</button>
+    <button class="btn btn-secondary">Secondary</button>
+    <button class="btn btn-ghost">Ghost</button>
+    <button class="btn" disabled>Disabled</button>
+  </div>
+  <div class="row">
+    <button class="btn btn-sm">Small</button>
+    <button class="btn">Default</button>
+    <button class="btn btn-lg">Large</button>
+  </div>
+  <code class="use">&lt;button class="btn btn-outline"&gt;&lt;svg class="icon icon-md"&gt;&lt;use href="ui/lucide.svg#i-download"/&gt;&lt;/svg&gt;Outline&lt;/button&gt;</code>
+</section>
+
+<section>
+  <h2>Badge</h2>
+  <div class="row">
+    <span class="badge badge-default">Default</span>
+    <span class="badge badge-secondary">Secondary</span>
+    <span class="badge badge-outline">Outline</span>
+    <span class="badge badge-destructive"><svg class="icon icon-sm"><use href="lucide.svg#i-shield-alert"/></svg>abuse flag</span>
+    <span class="badge badge-success"><svg class="icon icon-sm"><use href="lucide.svg#i-badge-check"/></svg>verified</span>
+    <span class="badge badge-warning">not rated</span>
+  </div>
+</section>
+
+<section>
+  <h2>Input · Select · Toggle</h2>
+  <div class="row">
+    <input class="input" style="max-width:280px" placeholder="Your email address">
+    <select class="select"><option>All states</option><option>TX</option><option>IL</option></select>
+    <button class="toggle" aria-pressed="true"><svg class="icon icon-md"><use href="lucide.svg#i-banknote"/></svg>Largest fines</button>
+    <button class="toggle" aria-pressed="false"><svg class="icon icon-md"><use href="lucide.svg#i-clipboard-list"/></svg>Most deficiencies</button>
+  </div>
+</section>
+
+<section>
+  <h2>Card · Data rows · Grade chips</h2>
+  <div class="demo-grid">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Willow Creek Senior Living</div>
+        <div class="card-description">Austin, TX · Medicare-certified</div>
+      </div>
+      <div class="card-content">
+        <div class="data-row"><span class="label">Federal fines</span><span class="value value-destructive">$768K · 6 fines</span></div>
+        <div class="data-row"><span class="label">Deficiencies (US avg 9.3)</span><span class="value value-success">7</span></div>
+        <div class="data-row"><span class="label">Staffing hrs / resident / day</span><span class="value">3.31</span></div>
+      </div>
+    </div>
+    <div>
+      <div class="row">
+        <span class="grade-chip" data-grade="A"><span class="g">A</span><span class="gl">CMS 5/5</span></span>
+        <span class="grade-chip" data-grade="B"><span class="g">B</span><span class="gl">CMS 4/5</span></span>
+        <span class="grade-chip" data-grade="C"><span class="g">C</span><span class="gl">CMS 3/5</span></span>
+        <span class="grade-chip" data-grade="D"><span class="g">D</span><span class="gl">CMS 2/5</span></span>
+        <span class="grade-chip" data-grade="F"><span class="g">F</span><span class="gl">CMS 1/5</span></span>
+        <span class="grade-chip" data-grade="NR"><span class="g">—</span><span class="gl">Not rated</span></span>
+      </div>
+      <div class="alert alert-destructive" style="margin-top:10px">
+        <svg class="icon icon-md"><use href="lucide.svg#i-shield-alert"/></svg>
+        <div><span class="alert-title">Carries the CMS abuse flag</span>Cited for abuse that harmed or could harm residents.</div>
+      </div>
+      <button class="list-item" style="margin-top:10px"><span>Arcadia Care Watseka <span class="meta">Watseka, IL</span></span><span class="badge badge-destructive">abuse flag</span></button>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>Accordion</h2>
+  <div class="accordion-item" data-open="false">
+    <button class="accordion-trigger" aria-expanded="false">How is ElderPath free for families?<svg class="icon icon-md"><use href="lucide.svg#i-chevron-down"/></svg></button>
+    <div class="accordion-content"><div>Communities pay a flat placement fee when a family moves in — never a percentage of rent, and payment never affects grades or rankings.</div></div>
+  </div>
+  <div class="accordion-item" data-open="false">
+    <button class="accordion-trigger" aria-expanded="false">Where does the safety data come from?<svg class="icon icon-md"><use href="lucide.svg#i-chevron-down"/></svg></button>
+    <div class="accordion-content"><div>Public state licensing and inspection databases, state citation records, and CMS data — sources cited on every report card.</div></div>
+  </div>
+</section>
+
+<section>
+  <h2>Band (inverse CTA)</h2>
+  <div class="band">
+    <div><h3>This is the data referral sites don't show you.</h3><p>Free for families. Rankings that can't be bought.</p></div>
+    <a class="btn" href="../check/">Open the lookup<svg class="icon icon-md"><use href="lucide.svg#i-arrow-right"/></svg></a>
+  </div>
+</section>
+
+<section>
+  <h2>Icons (Lucide, via sprite)</h2>
+  <div class="icon-grid" id="icons"></div>
+  <code class="use">&lt;svg class="icon icon-md"&gt;&lt;use href="ui/lucide.svg#i-search"/&gt;&lt;/svg&gt;</code>
+</section>
+
+</div>
+<script>
+  // accordion demo
+  document.querySelectorAll('.accordion-trigger').forEach(function (t) {
+    t.addEventListener('click', function () {
+      var item = t.parentElement, open = item.dataset.open === 'true';
+      var content = item.querySelector('.accordion-content');
+      item.dataset.open = String(!open);
+      t.setAttribute('aria-expanded', String(!open));
+      content.style.maxHeight = open ? null : content.scrollHeight + 'px';
+    });
+  });
+  // icon grid from the sprite
+  fetch('lucide.svg').then(function (r) { return r.text(); }).then(function (s) {
+    var ids = Array.from(s.matchAll(/id="(i-[a-z0-9-]+)"/g)).map(function (m) { return m[1]; });
+    document.getElementById('icons').innerHTML = ids.map(function (id) {
+      return '<div class="ig"><svg><use href="lucide.svg#' + id + '"/></svg>' + id.slice(2) + '</div>';
+    }).join('');
+  });
+</script>
+</body>
+</html>

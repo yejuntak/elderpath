@@ -1,0 +1,195 @@
+/* ============================================================
+   ElderPath UI — component library
+   shadcn/ui token system + component anatomy, implemented
+   framework-free for the static site. FLAT design: no shadows,
+   borders carry all elevation. Lucide icons via ui/lucide.svg.
+   ============================================================ */
+
+:root {
+  /* shadcn-style tokens → ElderPath warm palette */
+  --background: #f7f3ec;
+  --foreground: #2b251d;
+  --card: #fffdf9;
+  --card-foreground: #2b251d;
+  --primary: #9d4f24;
+  --primary-hover: #7c3c17;
+  --primary-foreground: #ffffff;
+  --secondary: #efe8db;
+  --secondary-foreground: #2b251d;
+  --muted: #efe8db;
+  --muted-foreground: #6e6553;
+  --body-foreground: #57503f;
+  --accent: #f3ece0;
+  --destructive: #b3261e;
+  --destructive-soft: #f9eae5;
+  --destructive-border: #ecd5c9;
+  --success: #2f6b52;
+  --success-soft: #e7f0ea;
+  --warning: #9a6a00;
+  --warning-soft: #f7f0da;
+  --border: #e3dac8;
+  --input: #e3dac8;
+  --ring: #9d4f24;
+  --radius: 14px;
+  --radius-lg: 20px;
+  --radius-full: 999px;
+  /* grade scale (data semantics only) */
+  --grade-a: #2e7d4f; --grade-b: #5f7d1f; --grade-c: #9a6a00;
+  --grade-d: #b54708; --grade-f: #b3261e; --grade-nr: #9a6a00;
+  /* dark inverse surface */
+  --inverse: #2b2118;
+  --inverse-foreground: #ece3d3;
+  --inverse-muted: #b5a98f;
+}
+
+/* ---------- base ---------- */
+.ui * { box-sizing: border-box; }
+.ui a:focus-visible, .ui button:focus-visible, .ui input:focus-visible,
+.ui select:focus-visible, .ui [tabindex]:focus-visible {
+  outline: 3px solid var(--ring); outline-offset: 2px;
+}
+
+/* ---------- icon ---------- */
+.icon { width: 1em; height: 1em; flex-shrink: 0; vertical-align: -0.125em; }
+.icon-sm { width: 14px; height: 14px; }
+.icon-md { width: 18px; height: 18px; }
+.icon-lg { width: 24px; height: 24px; }
+
+/* ---------- Button ---------- */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  font-family: inherit; font-size: 15px; font-weight: 600; line-height: 1;
+  border-radius: var(--radius-full); border: 1.5px solid transparent;
+  padding: 0 22px; height: 44px; cursor: pointer; text-decoration: none;
+  background: var(--primary); color: var(--primary-foreground);
+  transition: background .15s, border-color .15s, color .15s;
+}
+.btn:hover { background: var(--primary-hover); }
+.btn:disabled { opacity: .55; cursor: not-allowed; }
+.btn-outline { background: transparent; color: var(--primary); border-color: var(--primary); }
+.btn-outline:hover { background: var(--accent); color: var(--primary-hover); }
+.btn-secondary { background: var(--secondary); color: var(--secondary-foreground); }
+.btn-secondary:hover { background: #e6dccb; }
+.btn-ghost { background: transparent; color: var(--body-foreground); }
+.btn-ghost:hover { background: var(--accent); color: var(--foreground); }
+.btn-sm { height: 36px; padding: 0 16px; font-size: 13.5px; }
+.btn-lg { height: 52px; padding: 0 28px; font-size: 16px; }
+
+/* ---------- Input / Select ---------- */
+.input, .select {
+  font-family: inherit; font-size: 16px; color: var(--foreground);
+  background: #fff; border: 1.5px solid var(--input); border-radius: var(--radius-full);
+  height: 44px; padding: 0 18px; width: 100%;
+}
+.input::placeholder { color: var(--muted-foreground); }
+.input:focus, .select:focus { border-color: var(--ring); }
+.input-lg { height: 56px; padding: 0 24px; font-size: 17px; }
+.select { width: auto; appearance: none; -webkit-appearance: none; padding-right: 38px;
+  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236e6553' stroke-width='2' fill='none'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 16px center;
+}
+
+/* ---------- Toggle (chip) ---------- */
+.toggle {
+  display: inline-flex; align-items: center; gap: 7px;
+  font-family: inherit; font-size: 13.5px; font-weight: 600; line-height: 1;
+  color: var(--body-foreground); background: var(--card);
+  border: 1.5px solid var(--border); border-radius: var(--radius-full);
+  height: 44px; padding: 0 16px; cursor: pointer; transition: border-color .15s, color .15s, background .15s;
+}
+.toggle:hover { border-color: var(--primary); color: var(--primary); }
+.toggle[aria-pressed="true"] { border-color: var(--primary); color: var(--primary); background: var(--accent); }
+
+/* ---------- Card ---------- */
+.card { background: var(--card); border: 1.5px solid var(--border); border-radius: var(--radius-lg); }
+.card-header { padding: 22px 24px 0; }
+.card-title { font-size: 20px; font-weight: 600; }
+.card-description { font-size: 14px; color: var(--muted-foreground); margin-top: 2px; }
+.card-content { padding: 18px 24px 22px; }
+
+/* ---------- Badge ---------- */
+.badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 12.5px; font-weight: 700; line-height: 1; letter-spacing: .02em;
+  border-radius: var(--radius-full); padding: 6px 11px; border: 1px solid transparent;
+}
+.badge-default { background: var(--primary); color: var(--primary-foreground); }
+.badge-secondary { background: var(--secondary); color: var(--secondary-foreground); }
+.badge-outline { background: transparent; color: var(--body-foreground); border-color: var(--border); }
+.badge-destructive { background: var(--destructive-soft); color: var(--destructive); border-color: var(--destructive-border); }
+.badge-success { background: var(--success-soft); color: var(--success); }
+.badge-warning { background: var(--warning-soft); color: var(--warning); }
+
+/* ---------- Alert ---------- */
+.alert {
+  display: flex; gap: 12px; align-items: flex-start;
+  border-radius: var(--radius); padding: 14px 16px; font-size: 15px;
+  border: 1.5px solid var(--border); background: var(--card); color: var(--body-foreground);
+}
+.alert .icon { margin-top: 2px; }
+.alert-title { font-weight: 700; color: var(--foreground); display: block; }
+.alert-destructive { background: var(--destructive-soft); border-color: var(--destructive-border); color: var(--destructive); }
+.alert-destructive .alert-title { color: var(--destructive); }
+
+/* ---------- Grade chip (data semantic) ---------- */
+.grade-chip {
+  display: inline-flex; flex-direction: column; align-items: center; justify-content: center;
+  color: #fff; border-radius: var(--radius); padding: 10px 16px; text-align: center; line-height: 1;
+}
+.grade-chip .g { font-family: Georgia, 'Times New Roman', serif; font-size: 28px; font-weight: 700; }
+.grade-chip .gl { font-size: 10.5px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; margin-top: 5px; }
+.grade-chip[data-grade="A"] { background: var(--grade-a); }
+.grade-chip[data-grade="B"] { background: var(--grade-b); }
+.grade-chip[data-grade="C"] { background: var(--grade-c); }
+.grade-chip[data-grade="D"] { background: var(--grade-d); }
+.grade-chip[data-grade="F"] { background: var(--grade-f); }
+.grade-chip[data-grade="NR"] { background: var(--grade-nr); }
+
+/* ---------- Data list row ---------- */
+.data-row {
+  display: flex; justify-content: space-between; gap: 12px; align-items: baseline;
+  padding: 9px 0; font-size: 15.5px; border-bottom: 1px dashed var(--border);
+}
+.data-row:last-of-type { border-bottom: none; }
+.data-row .label { color: var(--body-foreground); }
+.data-row .value { font-weight: 600; text-align: right; }
+.value-success { color: var(--success); }
+.value-destructive { color: var(--destructive); }
+
+/* ---------- List item (result row) ---------- */
+.list-item {
+  display: flex; justify-content: space-between; gap: 12px; align-items: center; width: 100%;
+  text-align: left; background: var(--card); border: 1.5px solid var(--border);
+  border-radius: var(--radius); padding: 13px 18px; cursor: pointer;
+  font-family: inherit; font-size: 15.5px; color: var(--foreground); transition: border-color .15s;
+}
+.list-item:hover { border-color: var(--primary); }
+.list-item .meta { color: var(--muted-foreground); font-size: 13.5px; }
+
+/* ---------- Accordion ---------- */
+.accordion-item { background: var(--card); border: 1.5px solid var(--border); border-radius: var(--radius); margin-bottom: 10px; overflow: hidden; }
+.accordion-trigger {
+  width: 100%; display: flex; justify-content: space-between; align-items: center; gap: 16px;
+  background: none; border: none; cursor: pointer; text-align: left;
+  font-family: inherit; font-size: 16.5px; font-weight: 600; color: var(--foreground); padding: 18px 22px;
+}
+.accordion-trigger .icon { color: var(--primary); transition: transform .2s; }
+.accordion-item[data-open="true"] .accordion-trigger .icon { transform: rotate(180deg); }
+.accordion-content { max-height: 0; overflow: hidden; visibility: hidden; transition: max-height .25s ease, visibility 0s linear .25s; }
+.accordion-item[data-open="true"] .accordion-content { visibility: visible; transition: max-height .25s ease, visibility 0s; }
+.accordion-content > div { padding: 0 22px 18px; color: var(--body-foreground); font-size: 15px; }
+
+/* ---------- Separator ---------- */
+.separator { border: none; border-top: 1.5px solid var(--border); margin: 18px 0; }
+
+/* ---------- Inverse band (CTA) ---------- */
+.band {
+  background: var(--inverse); color: #fff; border-radius: var(--radius-lg);
+  padding: 24px 26px; display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap;
+}
+.band h3 { color: #fff; font-size: 19px; margin: 0 0 3px; }
+.band p { color: var(--inverse-muted); font-size: 14.5px; margin: 0; max-width: 46ch; }
+
+@media (prefers-reduced-motion: reduce) {
+  .ui *, .accordion-content, .toggle, .btn { transition: none !important; }
+}
