@@ -66,6 +66,28 @@
   }
   .res:hover { border-color: var(--sienna); }
   .res .loc { color: var(--muted); font-size: 13.5px; white-space: nowrap; }
+  .browse-row { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-top: 14px; }
+  .browse-row select {
+    font-family: inherit; font-size: 13.5px; font-weight: 600; color: var(--ink);
+    background: var(--card); border: 1px solid var(--line); border-radius: 999px; padding: 8px 14px;
+  }
+  .chip {
+    font-family: inherit; font-size: 13.5px; font-weight: 600; color: var(--body); cursor: pointer;
+    background: var(--card); border: 1px solid var(--line); border-radius: 999px; padding: 8px 14px;
+  }
+  .chip:hover, .chip.on { border-color: var(--sienna); color: var(--sienna); }
+  .list-head { font-size: 14px; color: var(--muted); margin: 16px 0 6px; text-align: center; }
+  .res .badge { font-size: 13px; font-weight: 700; white-space: nowrap; }
+  .res .badge.warn { color: var(--red); }
+  body.embed nav, body.embed .cta, body.embed section.about, body.embed footer, body.embed .embed-box { display: none; }
+  body.embed header.h { padding: 22px 0 14px; }
+  body.embed h1 { font-size: 26px; }
+  .embed-box { margin: 30px 0 0; }
+  .embed-box summary { cursor: pointer; font-size: 14px; font-weight: 600; color: var(--muted); }
+  .embed-box pre {
+    background: var(--card); border: 1px solid var(--line); border-radius: 12px;
+    padding: 14px 16px; font-size: 12.5px; overflow-x: auto; margin-top: 10px; user-select: all;
+  }
   .card { background: var(--card); border: 1px solid var(--line); border-radius: 20px; box-shadow: 0 18px 50px rgba(43,37,29,.12); padding: 26px 28px; margin: 22px 0; }
   .card-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; border-bottom: 1px solid var(--line); padding-bottom: 14px; margin-bottom: 8px; }
   .card-head h2 { font-size: 22px; }
@@ -116,6 +138,14 @@
     <input id="q" type="search" placeholder="Facility name, city, or state — try your hometown" aria-label="Search nursing homes by name, city, or state" autocomplete="off">
   </div>
   <p class="hint" id="hint">Type at least 3 characters · e.g. "Lindale TX", "Brookdale", "Missouri"</p>
+  <div class="browse-row" role="group" aria-label="Browse lists">
+    <select id="bst" aria-label="State filter">
+      <option value="">All states</option>
+    </select>
+    <button class="chip" type="button" data-browse="fines">💸 Largest fines</button>
+    <button class="chip" type="button" data-browse="abuse">🚩 Abuse-flagged</button>
+    <button class="chip" type="button" data-browse="defs">📋 Most deficiencies</button>
+  </div>
   <div class="results" id="results" aria-live="polite"></div>
 </header>
 
@@ -128,6 +158,13 @@
   </div>
   <a class="btn" href="../#join">Join the waitlist</a>
 </div>
+
+<details class="embed-box">
+  <summary>Run a senior-care site or local newsroom? Embed this lookup on your site (free)</summary>
+  <pre>&lt;iframe src="https://yejuntak.github.io/elderpath/check/?embed=1"
+  style="width:100%;height:640px;border:1px solid #e3dac8;border-radius:16px"
+  title="Nursing home safety lookup — ElderPath" loading="lazy"&gt;&lt;/iframe&gt;</pre>
+</details>
 
 <section class="about">
   <h2>Where does this data come from?</h2>
@@ -221,8 +258,10 @@
       defsLine + staffLine +
       '<p class="src">Source: CMS Provider Information dataset, May 2026 release. Verify current status at Medicare Care Compare.</p>' +
       '<div class="share-row"><button class="btn" id="share">Share this record</button>' +
+      '<button class="btn ghost" id="dlimg">Download card image</button>' +
       '<a class="btn ghost" href="https://www.medicare.gov/care-compare/?providerType=NursingHome&redirect=true" target="_blank" rel="noopener">Verify on Medicare.gov</a></div>' +
       '</div>';
+    document.getElementById('dlimg').addEventListener('click', function () { downloadCard(f); });
     var url = location.origin + location.pathname + '?q=' + encodeURIComponent(f.name + ' ' + f.st);
     document.getElementById('share').addEventListener('click', function () {
       var text = f.name + ' (' + f.city + ', ' + f.st + ') — CMS rating ' + (f.rating ? f.rating + '/5' : 'not rated') + (f.fines > 0 ? ', ' + fmtMoney(f.fines) + ' in federal fines' : '') + (f.abuse ? ', active abuse flag' : '') + '. Check any US nursing home free:';
@@ -237,10 +276,101 @@
     cardSlot.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   }
 
+  // ---- share-card image (1200x630 PNG, canvas) ----
+  function downloadCard(f) {
+    var g = GRADES[f.rating] || GRADES[0];
+    var c = document.createElement('canvas'); c.width = 1200; c.height = 630;
+    var x = c.getContext('2d');
+    x.fillStyle = '#f7f3ec'; x.fillRect(0, 0, 1200, 630);
+    x.fillStyle = '#fffdf9'; roundRect(x, 50, 50, 1100, 530, 28); x.fill();
+    x.strokeStyle = '#e3dac8'; x.lineWidth = 2; roundRect(x, 50, 50, 1100, 530, 28); x.stroke();
+    x.fillStyle = '#9d4f24'; x.font = '700 26px Georgia, serif';
+    x.fillText('ElderPath Check', 100, 122);
+    x.fillStyle = g[1]; roundRect(x, 950, 86, 160, 120, 20); x.fill();
+    x.fillStyle = '#fff'; x.textAlign = 'center';
+    x.font = '700 64px Georgia, serif'; x.fillText(g[0], 1030, 158);
+    x.font = '700 17px Inter, sans-serif'; x.fillText('CMS ' + (f.rating ? f.rating + '/5' : 'N/R'), 1030, 188);
+    x.textAlign = 'left'; x.fillStyle = '#2b251d';
+    x.font = '700 44px Georgia, serif';
+    var name = f.name.length > 38 ? f.name.slice(0, 37) + '…' : f.name;
+    x.fillText(name, 100, 200);
+    x.fillStyle = '#57503f'; x.font = '400 26px Inter, sans-serif';
+    x.fillText(f.city + ', ' + f.st + ' · Medicare-certified nursing facility', 100, 244);
+    var y = 320;
+    function line(label, val, warn) {
+      x.fillStyle = '#57503f'; x.font = '400 26px Inter, sans-serif'; x.fillText(label, 100, y);
+      x.fillStyle = warn ? '#b3261e' : '#2f6b52'; x.font = '700 26px Inter, sans-serif';
+      x.textAlign = 'right'; x.fillText(val, 1100, y); x.textAlign = 'left'; y += 56;
+    }
+    if (f.abuse) { x.fillStyle = '#b3261e'; x.font = '700 28px Inter, sans-serif'; x.fillText('⚠ Carries the federal abuse flag', 100, y); y += 56; }
+    line('Federal fines on current record', f.fines > 0 ? fmtMoney(f.fines) + ' · ' + f.finesN + ' fine' + (f.finesN === 1 ? '' : 's') : 'None', f.fines > 0);
+    if (f.defs >= 0) line('Health deficiencies (US avg ' + NAT_DEF_AVG + ')', String(f.defs), f.defs > NAT_DEF_AVG);
+    if (f.staff > 0) line('Nurse staffing hrs / resident / day', f.staff.toFixed(2), false);
+    x.fillStyle = '#6e6553'; x.font = '400 22px Inter, sans-serif';
+    x.fillText('Source: CMS, May 2026 · Check any US nursing home free:', 100, 520);
+    x.fillStyle = '#9d4f24'; x.font = '700 24px Inter, sans-serif';
+    x.fillText('yejuntak.github.io/elderpath/check', 100, 552);
+    var a = document.createElement('a');
+    a.download = 'elderpath-check-' + f.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').slice(0, 40) + '.png';
+    a.href = c.toDataURL('image/png');
+    document.body.appendChild(a); a.click(); a.remove();
+    toast.textContent = 'Card image downloaded — share it anywhere';
+    toast.classList.add('show'); setTimeout(function () { toast.classList.remove('show'); }, 2200);
+  }
+  function roundRect(x, a, b, w, h, r) {
+    x.beginPath(); x.moveTo(a + r, b); x.arcTo(a + w, b, a + w, b + h, r); x.arcTo(a + w, b + h, a, b + h, r);
+    x.arcTo(a, b + h, a, b, r); x.arcTo(a, b, a + w, b, r); x.closePath();
+  }
+
+  // ---- browse lists (deep-linkable outrage/utility lists) ----
+  var bst = document.getElementById('bst');
+  'AL AK AZ AR CA CO CT DE DC FL GA HI ID IL IN IA KS KY LA ME MD MA MI MN MS MO MT NE NV NH NJ NM NY NC ND OH OK OR PA RI SC SD TN TX UT VT VA WA WV WI WY'.split(' ').forEach(function (s) {
+    var o = document.createElement('option'); o.value = s; o.textContent = s; bst.appendChild(o);
+  });
+  var BROWSE = {
+    fines: { label: 'Largest federal fine totals', sort: function (a, b) { return b.fines - a.fines; }, badge: function (f) { return fmtMoney(f.fines); } },
+    abuse: { label: 'Facilities carrying the federal abuse flag', filter: function (f) { return f.abuse === 1; }, sort: function (a, b) { return a.rating - b.rating || b.fines - a.fines; }, badge: function () { return '🚩 abuse flag'; } },
+    defs:  { label: 'Most health deficiencies, latest inspection', sort: function (a, b) { return b.defs - a.defs; }, badge: function (f) { return f.defs + ' deficiencies'; } }
+  };
+  var activeBrowse = null;
+  function runBrowse(kind, st) {
+    var cfg = BROWSE[kind]; if (!cfg || !DATA) return;
+    var pool = DATA.filter(function (f) { return (!st || f.st === st) && (!cfg.filter || cfg.filter(f)); });
+    pool.sort(cfg.sort);
+    var top = pool.slice(0, 12);
+    resultsEl.innerHTML = '';
+    var head = document.createElement('p'); head.className = 'list-head';
+    head.textContent = cfg.label + (st ? ' — ' + st : ' — United States') + ' (top ' + top.length + ' of ' + pool.length.toLocaleString() + ')';
+    resultsEl.appendChild(head);
+    top.forEach(function (f) {
+      var b = document.createElement('button');
+      b.className = 'res'; b.type = 'button';
+      b.innerHTML = '<span>' + f.name + ' <span class="loc">' + f.city + ', ' + f.st + '</span></span><span class="badge warn">' + cfg.badge(f) + '</span>';
+      b.addEventListener('click', function () { showCard(f); });
+      resultsEl.appendChild(b);
+    });
+    var u = new URL(location.href);
+    u.searchParams.set('browse', kind); st ? u.searchParams.set('st', st) : u.searchParams.delete('st');
+    u.searchParams.delete('q');
+    history.replaceState(null, '', u.toString());
+    document.querySelectorAll('.chip').forEach(function (ch) { ch.classList.toggle('on', ch.dataset.browse === kind); });
+  }
+  document.querySelectorAll('.chip').forEach(function (ch) {
+    ch.addEventListener('click', function () {
+      activeBrowse = ch.dataset.browse;
+      load().then(function () { runBrowse(activeBrowse, bst.value); });
+    });
+  });
+  bst.addEventListener('change', function () {
+    if (activeBrowse) load().then(function () { runBrowse(activeBrowse, bst.value); });
+  });
+
   var debounce;
   q.addEventListener('input', function () {
     clearTimeout(debounce);
     var v = q.value;
+    activeBrowse = null;
+    document.querySelectorAll('.chip').forEach(function (ch) { ch.classList.remove('on'); });
     debounce = setTimeout(function () {
       load().then(function () { showResults(search(v)); });
     }, 120);
@@ -248,6 +378,7 @@
   q.addEventListener('focus', load);
 
   var params = new URLSearchParams(location.search);
+  if (params.get('embed') === '1') document.body.classList.add('embed');
   if (params.get('q')) {
     q.value = params.get('q');
     load().then(function () {
@@ -255,6 +386,10 @@
       showResults(hits);
       if (hits.length) showCard(hits[0]);
     });
+  } else if (params.get('browse') && BROWSE[params.get('browse')]) {
+    activeBrowse = params.get('browse');
+    if (params.get('st')) bst.value = params.get('st');
+    load().then(function () { runBrowse(activeBrowse, bst.value); });
   }
 })();
 </script>
