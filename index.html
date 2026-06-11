@@ -219,6 +219,9 @@
   .waitlist-msg { font-size: 15px; font-weight: 600; min-height: 24px; margin-top: 10px; }
   .waitlist-msg.ok { color: var(--green); }
   .waitlist-msg.err { color: var(--red); font-weight: 500; }
+  .hero-try { font-size: 14px; color: var(--body); margin-top: 4px; }
+  .hero-try a { color: var(--sienna); font-weight: 600; text-decoration: none; }
+  .hero-try a:hover { text-decoration: underline; }
   .hero-stats { display: flex; gap: 36px; margin-top: 38px; flex-wrap: wrap; }
   .hstat .n { font-family: 'Fraunces', serif; font-size: 26px; font-weight: 700; color: var(--ink); line-height: 1.1; }
   .hstat .l { font-size: 13.5px; color: var(--muted); margin-top: 2px; }
@@ -487,9 +490,9 @@
   <div class="wrap nav-inner">
     <a class="logo" href="#">Elder<em>Path</em></a>
     <div class="nav-links">
+      <a href="check/"><strong>Look up a facility</strong></a>
       <a href="#why">Why ElderPath</a>
       <a href="#compare">Compare</a>
-      <a href="#how">How it works</a>
       <a href="#method">Our grading</a>
       <a href="#faq">FAQ</a>
       <a href="#join" class="btn">Get early access</a>
@@ -500,6 +503,7 @@
   </div>
 </nav>
 <div class="menu-drawer" id="menu-drawer">
+  <a href="check/">Look up a facility</a>
   <a href="#why">Why ElderPath</a>
   <a href="#compare">Compare</a>
   <a href="#how">How it works</a>
@@ -530,6 +534,7 @@
         <button class="btn" type="submit">Get early access</button>
       </form>
       <div class="waitlist-msg" aria-live="polite"></div>
+      <p class="hero-try">Or try it right now: <a href="check/">look up any U.S. nursing home's safety record →</a> Free, no signup.</p>
       <div class="hero-stats">
         <div class="hstat"><div class="n">36 months</div><div class="l">of inspection history, every report</div></div>
         <div class="hstat"><div class="n">Real prices</div><div class="l">from resident families, not teasers</div></div>
