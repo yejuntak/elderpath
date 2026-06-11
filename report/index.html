@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The State of US Nursing Home Safety, 2026 — ElderPath Transparency Report</title>
+<meta name="description" content="ElderPath analyzed all 14,700 Medicare-certified US nursing homes (CMS data, May 2026): 19.6% are rated 1 star, 1,482 carry an active abuse flag, and facilities have paid $462M in federal fines. Every state ranked.">
+<link rel="canonical" href="https://yejuntak.github.io/elderpath/report/">
+<meta property="og:type" content="article">
+<meta property="og:title" content="2 in 5 US nursing homes rate below average — every state ranked">
+<meta property="og:description" content="We analyzed all 14,700 Medicare-certified nursing homes. 1,482 carry an active abuse flag. Missouri ranks worst; 1 in 3 of its facilities is rated 1 star.">
+<meta property="og:url" content="https://yejuntak.github.io/elderpath/report/">
+<meta property="og:image" content="https://yejuntak.github.io/elderpath/img/family.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%239d4f24'/%3E%3Ctext x='32' y='44' font-family='Georgia,serif' font-size='36' font-weight='bold' fill='%23fff' text-anchor='middle'%3EE%3C/text%3E%3C/svg%3E">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": "The State of US Nursing Home Safety, 2026",
+      "datePublished": "2026-06-10",
+      "dateModified": "2026-06-10",
+      "author": { "@type": "Organization", "name": "ElderPath" },
+      "publisher": { "@type": "Organization", "name": "ElderPath", "url": "https://yejuntak.github.io/elderpath/" },
+      "description": "Analysis of all 14,700 Medicare-certified US nursing homes using the CMS Provider Information dataset (May 2026 release): star ratings, abuse flags, federal fines, and a ranking of all 50 states."
+    },
+    {
+      "@type": "Dataset",
+      "name": "ElderPath analysis of CMS Nursing Home Provider Information, May 2026",
+      "description": "Per-state aggregation of CMS Care Compare provider data: share of 1-star facilities, share rated below average, share carrying the CMS abuse icon, and total federal fines.",
+      "isBasedOn": "https://data.cms.gov/provider-data/dataset/4pq5-n9py",
+      "temporalCoverage": "2026-05",
+      "creator": { "@type": "Organization", "name": "ElderPath" },
+      "license": "https://creativecommons.org/licenses/by/4.0/"
+    }
+  ]
+}
+</script>
+<style>
+  :root {
+    --ink: #2b251d; --body: #57503f; --muted: #6e6553;
+    --cream: #f7f3ec; --cream-2: #efe8db; --card: #fffdf9;
+    --sienna: #9d4f24; --sienna-dark: #7c3c17;
+    --green: #2f6b52; --red: #b3261e; --red-bg: #f9eae5;
+    --line: #e3dac8; --brown: #2b2118; --on-brown: #ece3d3; --on-brown-muted: #b5a98f;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; background: var(--cream); color: var(--ink); font-size: 17px; line-height: 1.65; -webkit-font-smoothing: antialiased; }
+  h1, h2, h3 { font-family: Georgia, 'Times New Roman', serif; font-weight: 600; line-height: 1.12; letter-spacing: -.01em; }
+  .it { font-style: italic; color: var(--sienna); }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 0 clamp(18px, 3.5vw, 24px); }
+  a:focus-visible, button:focus-visible { outline: 3px solid var(--sienna); outline-offset: 2px; }
+  nav { position: sticky; top: 0; z-index: 50; background: rgba(247,243,236,.93); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); }
+  .nav-inner { display: flex; align-items: center; justify-content: space-between; height: 64px; }
+  .logo { font-family: Georgia, serif; font-weight: 700; font-size: 20px; color: var(--ink); text-decoration: none; }
+  .logo em { font-style: italic; color: var(--sienna); }
+  .btn { display: inline-block; background: var(--sienna); color: #fff; font-size: 15px; font-weight: 600; padding: 11px 22px; border-radius: 999px; text-decoration: none; }
+  .btn:hover { background: var(--sienna-dark); }
+  header.rhead { padding: 64px 0 40px; }
+  .kicker { display: block; font-size: 12.5px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: var(--sienna); margin-bottom: 16px; }
+  h1 { font-size: clamp(32px, 5vw, 50px); margin-bottom: 20px; }
+  .answer { font-size: 18.5px; color: var(--body); border-left: 4px solid var(--sienna); padding-left: 18px; }
+  .meta-line { margin-top: 18px; font-size: 13.5px; color: var(--muted); }
+  section { padding: 36px 0; }
+  h2 { font-size: clamp(24px, 3.4vw, 32px); margin: 18px 0 14px; }
+  p { margin-bottom: 14px; color: var(--body); }
+  p strong { color: var(--ink); }
+  .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 14px; margin: 26px 0; }
+  .stat { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 20px; }
+  .stat .n { font-family: Georgia, serif; font-size: 30px; font-weight: 700; color: var(--sienna); line-height: 1.05; }
+  .stat .l { font-size: 13.5px; color: var(--muted); margin-top: 6px; }
+  .table-card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; overflow: auto; margin: 20px 0; }
+  table { width: 100%; border-collapse: collapse; font-size: 14.5px; min-width: 620px; }
+  th, td { padding: 10px 14px; text-align: left; border-bottom: 1px solid var(--line); white-space: nowrap; }
+  thead th { background: var(--cream-2); font-size: 12px; letter-spacing: .05em; text-transform: uppercase; color: var(--body); position: sticky; top: 0; }
+  tbody tr:last-child td { border-bottom: none; }
+  td.bad { color: var(--red); font-weight: 700; }
+  .note { font-size: 13px; color: var(--muted); margin-top: 8px; }
+  .tx-list { background: var(--red-bg); border: 1px solid #ecd5c9; border-radius: 16px; padding: 22px 24px; margin: 18px 0; }
+  .tx-list h3 { font-size: 17px; margin-bottom: 10px; }
+  .tx-list div { display: flex; justify-content: space-between; gap: 12px; padding: 6px 0; font-size: 15px; color: var(--body); border-bottom: 1px dashed #ecd5c9; }
+  .tx-list div:last-of-type { border-bottom: none; }
+  .tx-list .amt { font-weight: 700; color: var(--red); white-space: nowrap; }
+  .cta-band { background: var(--brown); color: #fff; border-radius: 20px; padding: 30px 32px; margin: 26px 0; display: flex; align-items: center; justify-content: space-between; gap: 18px; flex-wrap: wrap; }
+  .cta-band h3 { font-size: 21px; color: #fff; margin-bottom: 4px; }
+  .cta-band p { color: var(--on-brown-muted); font-size: 15px; margin: 0; max-width: 50ch; }
+  .press { background: var(--cream-2); border-radius: 16px; padding: 24px 26px; margin: 18px 0; }
+  .press h3 { font-size: 18px; margin-bottom: 8px; }
+  .press p { font-size: 15px; }
+  footer { border-top: 1px solid var(--line); margin-top: 40px; padding: 30px 0 50px; font-size: 13px; color: var(--muted); }
+  footer a { color: var(--sienna); }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+</style>
+</head>
+<body>
+
+<nav aria-label="Main">
+  <div class="wrap nav-inner">
+    <a class="logo" href="../">Elder<em>Path</em></a>
+    <a class="btn" href="../#join">Get early access</a>
+  </div>
+</nav>
+
+<main id="main">
+<div class="wrap">
+
+<header class="rhead">
+  <span class="kicker">ElderPath Transparency Report · No. 1</span>
+  <h1>The State of US Nursing Home Safety, <span class="it">2026</span></h1>
+  <p class="answer">We analyzed all <strong>14,700</strong> Medicare-certified nursing homes in the latest federal dataset. <strong>19.6%</strong> are rated 1 star — the lowest possible — and <strong>40.1%</strong> sit in the bottom two tiers. <strong>1,482 facilities (1 in 10)</strong> carry an active CMS abuse flag, and facilities have paid <strong>$462 million</strong> in federal fines.</p>
+  <p class="meta-line">Source: CMS Care Compare Provider Information dataset, May 2026 release (published May 27, 2026) · Analyzed by ElderPath, June 10, 2026 · Free to republish with credit</p>
+</header>
+
+<section>
+  <h2>What does the federal data show about nursing home quality in 2026?</h2>
+  <div class="stat-grid">
+    <div class="stat"><div class="n">14,700</div><div class="l">Medicare-certified nursing homes analyzed</div></div>
+    <div class="stat"><div class="n">19.6%</div><div class="l">rated 1 star — the lowest possible rating</div></div>
+    <div class="stat"><div class="n">40.1%</div><div class="l">rated below average (1 or 2 stars)</div></div>
+    <div class="stat"><div class="n">1,482</div><div class="l">facilities carry an active CMS abuse flag (10.1%)</div></div>
+    <div class="stat"><div class="n">$462M</div><div class="l">in federal fines on current records</div></div>
+    <div class="stat"><div class="n">45.1%</div><div class="l">of all facilities have been fined at least once</div></div>
+    <div class="stat"><div class="n">9.3</div><div class="l">average health deficiencies per facility, latest inspection cycle</div></div>
+    <div class="stat"><div class="n">528</div><div class="l">facilities in the Special Focus program for persistent poor care</div></div>
+  </div>
+  <p>The abuse flag is not a technicality: CMS attaches it only when inspectors cite a facility for abuse that led to harm within the past year, or potential harm in each of the last two years. One in ten certified facilities in America currently carries it.</p>
+</section>
+
+<section id="states">
+  <h2>Which states have the worst nursing homes? All 50, ranked.</h2>
+  <p>Ranked by the share of facilities rated 1 star in the May 2026 federal data. In <strong>Missouri, 1 in 3 nursing homes (34.7%)</strong> holds the lowest possible rating; <strong>Illinois</strong> is close behind — and <strong>29.5% of Illinois facilities also carry an active abuse flag</strong>, the highest rate of any large state. <strong>Utah (6.2%)</strong> has the smallest share of 1-star homes.</p>
+  <div class="table-card">
+    <table>
+      <thead>
+        <tr><th>#</th><th>State</th><th>Facilities</th><th>1-star</th><th>1–2 star</th><th>Abuse flag</th><th>Total fines</th></tr>
+      </thead>
+      <tbody>
+          <tr><td>1</td><td>Missouri</td><td>487</td><td class="bad">34.7%</td><td>53.8%</td><td>13.1%</td><td>$17.1M</td></tr>
+          <tr><td>2</td><td>Illinois</td><td>667</td><td class="bad">33.9%</td><td>54.7%</td><td>29.5%</td><td>$66.4M</td></tr>
+          <tr><td>3</td><td>Louisiana</td><td>266</td><td class="bad">30.8%</td><td>54.5%</td><td>8.3%</td><td>$13.6M</td></tr>
+          <tr><td>4</td><td>Mississippi</td><td>202</td><td class="bad">28.7%</td><td>49.5%</td><td>11.4%</td><td>$4.1M</td></tr>
+          <tr><td>5</td><td>Oklahoma</td><td>283</td><td class="bad">28.3%</td><td>46.6%</td><td>10.6%</td><td>$6.1M</td></tr>
+          <tr><td>6</td><td>Georgia</td><td>356</td><td class="bad">27.0%</td><td>48.3%</td><td>5.3%</td><td>$5.1M</td></tr>
+          <tr><td>7</td><td>Texas</td><td>1,176</td><td>24.2%</td><td>47.9%</td><td>13.3%</td><td>$59.9M</td></tr>
+          <tr><td>8</td><td>Nebraska</td><td>179</td><td>24.0%</td><td>45.3%</td><td>1.1%</td><td>$1.7M</td></tr>
+          <tr><td>9</td><td>New Mexico</td><td>68</td><td>23.5%</td><td>45.6%</td><td>16.2%</td><td>$2.9M</td></tr>
+          <tr><td>10</td><td>Montana</td><td>61</td><td>23.0%</td><td>42.6%</td><td>14.8%</td><td>$3.4M</td></tr>
+          <tr><td>11</td><td>Wyoming</td><td>36</td><td>22.2%</td><td>41.7%</td><td>27.8%</td><td>$0.9M</td></tr>
+          <tr><td>12</td><td>North Carolina</td><td>420</td><td>21.9%</td><td>41.9%</td><td>8.8%</td><td>$16.6M</td></tr>
+          <tr><td>13</td><td>South Dakota</td><td>96</td><td>21.9%</td><td>46.9%</td><td>11.5%</td><td>$3.1M</td></tr>
+          <tr><td>14</td><td>Wisconsin</td><td>323</td><td>21.4%</td><td>41.2%</td><td>4.3%</td><td>$12.5M</td></tr>
+          <tr><td>15</td><td>West Virginia</td><td>123</td><td>21.1%</td><td>38.2%</td><td>9.8%</td><td>$3.6M</td></tr>
+          <tr><td>16</td><td>Kansas</td><td>297</td><td>20.9%</td><td>41.4%</td><td>9.1%</td><td>$6.6M</td></tr>
+          <tr><td>17</td><td>Virginia</td><td>289</td><td>20.8%</td><td>37.7%</td><td>8.7%</td><td>$5.7M</td></tr>
+          <tr><td>18</td><td>Kentucky</td><td>268</td><td>20.1%</td><td>39.2%</td><td>2.6%</td><td>$5.3M</td></tr>
+          <tr><td>19</td><td>Minnesota</td><td>338</td><td>20.1%</td><td>34.9%</td><td>5.6%</td><td>$6.6M</td></tr>
+          <tr><td>20</td><td>Alaska</td><td>20</td><td>20.0%</td><td>40.0%</td><td>5.0%</td><td>$0.8M</td></tr>
+          <tr><td>21</td><td>Idaho</td><td>80</td><td>20.0%</td><td>35.0%</td><td>10.0%</td><td>$1.1M</td></tr>
+          <tr><td>22</td><td>Connecticut</td><td>191</td><td>19.9%</td><td>41.4%</td><td>23.0%</td><td>$3.9M</td></tr>
+          <tr><td>23</td><td>Iowa</td><td>390</td><td>19.7%</td><td>37.4%</td><td>2.8%</td><td>$8.0M</td></tr>
+          <tr><td>24</td><td>Massachusetts</td><td>341</td><td>19.6%</td><td>39.9%</td><td>3.2%</td><td>$12.9M</td></tr>
+          <tr><td>25</td><td>Tennessee</td><td>303</td><td>19.5%</td><td>38.9%</td><td>6.9%</td><td>$8.2M</td></tr>
+          <tr><td>26</td><td>South Carolina</td><td>187</td><td>19.3%</td><td>41.2%</td><td>5.9%</td><td>$2.7M</td></tr>
+          <tr><td>27</td><td>Pennsylvania</td><td>657</td><td>18.7%</td><td>41.7%</td><td>14.2%</td><td>$17.1M</td></tr>
+          <tr><td>28</td><td>Nevada</td><td>66</td><td>18.2%</td><td>33.3%</td><td>9.1%</td><td>$0.9M</td></tr>
+          <tr><td>29</td><td>Vermont</td><td>33</td><td>18.2%</td><td>39.4%</td><td>18.2%</td><td>$2.9M</td></tr>
+          <tr><td>30</td><td>Maryland</td><td>221</td><td>18.1%</td><td>35.7%</td><td>13.1%</td><td>$5.0M</td></tr>
+          <tr><td>31</td><td>North Dakota</td><td>72</td><td>18.1%</td><td>34.7%</td><td>16.7%</td><td>$1.8M</td></tr>
+          <tr><td>32</td><td>Rhode Island</td><td>73</td><td>17.8%</td><td>41.1%</td><td>9.6%</td><td>$4.7M</td></tr>
+          <tr><td>33</td><td>Indiana</td><td>507</td><td>17.4%</td><td>35.9%</td><td>5.3%</td><td>$2.9M</td></tr>
+          <tr><td>34</td><td>New York</td><td>596</td><td>17.4%</td><td>40.6%</td><td>8.1%</td><td>$14.3M</td></tr>
+          <tr><td>35</td><td>Alabama</td><td>224</td><td>17.0%</td><td>37.1%</td><td>7.1%</td><td>$3.2M</td></tr>
+          <tr><td>36</td><td>Michigan</td><td>423</td><td>17.0%</td><td>32.9%</td><td>13.7%</td><td>$14.6M</td></tr>
+          <tr><td>37</td><td>California</td><td>1,164</td><td>16.2%</td><td>34.4%</td><td>10.7%</td><td>$30.9M</td></tr>
+          <tr><td>38</td><td>Maine</td><td>78</td><td>15.4%</td><td>43.6%</td><td>1.3%</td><td>$0.6M</td></tr>
+          <tr><td>39</td><td>New Hampshire</td><td>73</td><td>15.1%</td><td>42.5%</td><td>0.0%</td><td>$0.5M</td></tr>
+          <tr><td>40</td><td>Oregon</td><td>128</td><td>14.8%</td><td>39.1%</td><td>11.7%</td><td>$3.6M</td></tr>
+          <tr><td>41</td><td>Washington</td><td>194</td><td>13.9%</td><td>30.9%</td><td>5.7%</td><td>$11.2M</td></tr>
+          <tr><td>42</td><td>Colorado</td><td>210</td><td>13.3%</td><td>34.3%</td><td>24.8%</td><td>$5.5M</td></tr>
+          <tr><td>43</td><td>Florida</td><td>694</td><td>11.7%</td><td>34.3%</td><td>8.2%</td><td>$19.5M</td></tr>
+          <tr><td>44</td><td>Ohio</td><td>921</td><td>11.0%</td><td>34.2%</td><td>4.5%</td><td>$21.3M</td></tr>
+          <tr><td>45</td><td>Arkansas</td><td>221</td><td>10.0%</td><td>26.7%</td><td>2.3%</td><td>$1.9M</td></tr>
+          <tr><td>46</td><td>New Jersey</td><td>348</td><td>9.5%</td><td>30.5%</td><td>4.3%</td><td>$12.6M</td></tr>
+          <tr><td>47</td><td>Delaware</td><td>44</td><td>9.1%</td><td>29.5%</td><td>15.9%</td><td>$2.8M</td></tr>
+          <tr><td>48</td><td>Arizona</td><td>140</td><td>7.1%</td><td>28.6%</td><td>25.0%</td><td>$1.1M</td></tr>
+          <tr><td>49</td><td>Hawaii</td><td>42</td><td>7.1%</td><td>21.4%</td><td>2.4%</td><td>$0.8M</td></tr>
+          <tr><td>50</td><td>Utah</td><td>97</td><td>6.2%</td><td>32.0%</td><td>12.4%</td><td>$2.6M</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="note">"1-star" = share of facilities with a CMS Overall Rating of 1 of 5. "Abuse flag" = share carrying the CMS abuse icon. "Total fines" = sum of federal fines on facilities' current CMS records. States with fewer than 20 facilities excluded.</p>
+</section>
+
+<section id="texas">
+  <h2>Texas spotlight: 7th-worst state, $59.9M in fines</h2>
+  <p>Texas has more certified nursing homes than any other state (1,176). <strong>24.2% are rated 1 star</strong>, <strong>47.9%</strong> sit in the bottom two tiers, and <strong>70.2% have been fined</strong> — the data point that surprised us most, against a 45.1% national rate.</p>
+  <div class="tx-list">
+    <h3>Largest federal fine totals on current Texas records</h3>
+    <div><span>Avir at Lindale — Lindale, TX (1-star)</span><span class="amt">$767,771</span></div>
+    <div><span>Whispering Pines Lodge — Longview, TX (1-star)</span><span class="amt">$624,499</span></div>
+    <div><span>Avir at Rose Trail — Tyler, TX (1-star)</span><span class="amt">$520,257</span></div>
+    <div><span>Harmony Care at Beaumont — Beaumont, TX</span><span class="amt">$456,231</span></div>
+    <div><span>Oakmont Healthcare &amp; Rehab — Humble, TX (2-star)</span><span class="amt">$418,615</span></div>
+  </div>
+  <p class="note">All figures are from each facility's public CMS record (May 2026 release). Fines reflect federal enforcement actions on the current record and are reported here without alteration.</p>
+</section>
+
+<section>
+  <h2>Why is assisted living even harder to research than nursing homes?</h2>
+  <p>Everything above exists because nursing homes are federally certified — CMS publishes one national dataset anyone can download. <strong>Assisted living has no federal equivalent.</strong> Its inspection records are scattered across 50 separate state agencies, mostly as PDFs, with no common rating system — while referral platforms that families turn to are paid by the facilities they recommend. A 2024 Washington Post analysis found more than a third of facilities the largest referral site gave "Best of Senior Living" awards had been cited for neglect or substandard care, and the Senate Aging Committee opened an investigation that June.</p>
+  <p>That's the gap ElderPath is being built to close: report cards for senior-living communities built from state inspection records, staffing data, and prices families actually pay — free for families, with rankings that can't be bought.</p>
+  <div class="cta-band">
+    <div>
+      <h3>Get the report card for your parent's shortlist</h3>
+      <p>Join the waitlist — first 1,000 families get the independent-advisor tier free at launch.</p>
+    </div>
+    <a class="btn" href="../#join">Get early access</a>
+  </div>
+</section>
+
+<section>
+  <h2>Methodology &amp; sources</h2>
+  <p>All statistics were computed from the <a href="https://data.cms.gov/provider-data/dataset/4pq5-n9py">CMS Provider Information dataset</a> (Nursing homes including rehab services; May 2026 monthly release, published May 27, 2026; 14,700 facilities), retrieved and analyzed June 10, 2026. Ratings are the CMS Five-Star Quality Rating System's Overall Rating. The abuse measure is the CMS abuse icon. Fines are the "Total Amount of Fines in Dollars" field on each facility's current record. State table excludes states and territories with fewer than 20 certified facilities. Analysis code and aggregates available on request.</p>
+  <div class="press">
+    <h3>For journalists</h3>
+    <p>State- and county-level cuts of this analysis (your market's 1-star list, abuse-flag list, or fine totals) are free on request, with no attribution conditions beyond a link. Contact: <a href="mailto:takyejun@gmail.com">takyejun@gmail.com</a>. The underlying federal data is public; we'll share our aggregation so you can verify every number.</p>
+  </div>
+</section>
+
+</div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p><a href="../">ElderPath</a> is a pre-launch, independent senior-living search service. This report summarizes public federal data without alteration; facility names and figures are as published by CMS. Nursing homes (covered by this federal dataset) are distinct from assisted-living communities (state-regulated), which ElderPath's report cards will cover. © 2026 ElderPath.</p>
+  </div>
+</footer>
+
+</body>
+</html>
